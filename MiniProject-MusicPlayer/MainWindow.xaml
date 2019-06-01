@@ -24,7 +24,31 @@
                         <TextBlock Grid.Column="1" FontSize="14" Text="Browse" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                     </Grid>
                 </TabItem.Header>
-                <Button Content="Choose files..." Name="browseButton" Click="BrowseButton_Click" Background="WhiteSmoke" HorizontalAlignment="Center" Width="100" Height="25"/>
+                <Grid>
+                    <Button Content="Choose files..." Name="browseButton" Click="BrowseButton_Click" Background="WhiteSmoke" HorizontalAlignment="Center" Width="100" Height="25"/>
+                    <ListView Name="BrowseListView" Visibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Width="100" Height="135" Margin="10, 5, 10, 0">
+                                    <StackPanel.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Play" Click="PlayMenuItem_Click"/>
+                                            <MenuItem Header="Add to playlist"/>
+                                        </ContextMenu>
+                                    </StackPanel.ContextMenu>
+                                    <Image Source="{Binding Cover}" Width="100" Height="100"/>
+                                    <TextBlock Text="{Binding Title}"/>
+                                    <TextBlock Text="{Binding Artist}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
             </TabItem>
 
             <TabItem >
@@ -39,9 +63,7 @@
                     </Grid>
                 </TabItem.Header>
 
-
-
-                    <Grid>
+                <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="2*" />
@@ -81,11 +103,7 @@
                             <!--TextBlock FontSize="14" Text="{Binding Path=Text, ElementName=txtValue}" /-->
                         </WrapPanel>
                     </WrapPanel>
-                    
                 </Grid>
-
-
-
             </TabItem>
 
             <TabItem >

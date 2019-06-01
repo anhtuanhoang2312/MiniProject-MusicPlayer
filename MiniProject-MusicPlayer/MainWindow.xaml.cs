@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.ComponentModel;
 
 namespace MiniProject_MusicPlayer
 {
@@ -29,6 +30,8 @@ namespace MiniProject_MusicPlayer
 
         MediaPlayer _audio = new MediaPlayer();
         DispatcherTimer _timer = new DispatcherTimer();
+		BindingList<Info> _infoList = null;
+		string currentlyPlayingSong = null;
         bool _isDragging = false;
         bool _isPlaying = false;
 
@@ -52,34 +55,85 @@ namespace MiniProject_MusicPlayer
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
+			ImageSource Cover = null;
+			string Title = null;
+			string Artist = null;
+
             var screen = new Microsoft.Win32.OpenFileDialog();
             screen.Filter = "Audio File|*.mp3";
             screen.Multiselect = true;
 
             if (screen.ShowDialog() == true)
             {
-                var filename = screen.FileName;
-                _audio.Open(new Uri(filename));
+                var filenames = screen.FileNames;
 
-                TagLib.File file = TagLib.File.Create(screen.FileName);
-                TagLib.IPicture pic = file.Tag.Pictures[0]; 
-                System.IO.MemoryStream stream = new System.IO.MemoryStream(pic.Data.Data);
-                BitmapFrame bmp = BitmapFrame.Create(stream);
-                cover.Source = bmp;
+				browseButton.Visibility = Visibility.Hidden;
 
-                string title = file.Tag.Title;
-                Title.Text = title;
-                string[] artist = file.Tag.AlbumArtists;
-                Artist.Text = "Artist \t" + artist[0].ToString();
-                string album = file.Tag.Album;
-                Album.Text = "Album \t" + album;
-                string[] genre = file.Tag.Genres;
-                Genre.Text = "Genre \t" + genre[0].ToString();
-                uint year = file.Tag.Year;
-                Year.Text = "Year \t" + year.ToString();
+				BrowseListView.Visibility = Visibility.Visible;
 
+				_infoList = new BindingList<Info>();
+
+				foreach(var filename in filenames)
+				{
+					TagLib.File file = TagLib.File.Create(filename);
+					
+					if(file.Tag.Pictures.Length >= 1)
+					{
+						TagLib.IPicture pic = file.Tag.Pictures[0];
+						System.IO.MemoryStream stream = new System.IO.MemoryStream(pic.Data.Data);
+						BitmapFrame bmp = BitmapFrame.Create(stream);
+						Cover = bmp;
+					}
+					else
+					{
+						BitmapImage bi = new BitmapImage();
+						bi.BeginInit();
+						bi.UriSource = new Uri("/Icon/MusicNote.png", UriKind.Relative);
+						bi.EndInit();
+						Cover = bi;
+					}
+
+					Title = file.Tag.Title;
+					
+					if(file.Tag.AlbumArtists.Length >= 1)
+					{
+						Artist = file.Tag.AlbumArtists[0].ToString();
+					}
+					else
+					{
+						Artist = "Unknown";
+					}
+
+					_infoList.Add(new Info(Cover, Title, Artist, filename));
+				}
+
+				BrowseListView.ItemsSource = _infoList;
             }
         }
+
+		private void NowPlaying(string song)
+		{
+			currentlyPlayingSong = song;
+
+			_audio.Open(new Uri(song));
+
+			TagLib.File file = TagLib.File.Create(song);
+			TagLib.IPicture pic = file.Tag.Pictures[0];
+			System.IO.MemoryStream stream = new System.IO.MemoryStream(pic.Data.Data);
+			BitmapFrame bmp = BitmapFrame.Create(stream);
+			cover.Source = bmp;
+
+			string title = file.Tag.Title;
+			Title.Text = title;
+			string[] artist = file.Tag.AlbumArtists;
+			Artist.Text = "Artist \t" + artist[0].ToString();
+			string album = file.Tag.Album;
+			Album.Text = "Album \t" + album;
+			string[] genre = file.Tag.Genres;
+			Genre.Text = "Genre \t" + genre[0].ToString();
+			uint year = file.Tag.Year;
+			Year.Text = "Year \t" + year.ToString();
+		}
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
@@ -127,5 +181,13 @@ namespace MiniProject_MusicPlayer
             _isDragging = false;
             _audio.Position = TimeSpan.FromSeconds(Slider.Value);
         }
-    }
+
+		private void PlayMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			var menu = sender as MenuItem;
+			var info = menu.DataContext as Info;
+
+			NowPlaying(info.FileName);
+		}
+	}
 }
