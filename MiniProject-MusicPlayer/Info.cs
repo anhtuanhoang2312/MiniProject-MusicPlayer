@@ -7,12 +7,13 @@ using System.Windows.Media;
 
 namespace MiniProject_MusicPlayer
 {
-	class Info
+	public class Info
 	{
-		private ImageSource _cover;
-		private string _title;
-		private string _artist;
-		private string _filename;
+		public ImageSource _cover;
+		public string _title;
+		public string _artist;
+        public string _album;
+        public string _filename;
 
 		public ImageSource Cover
 		{
@@ -50,7 +51,19 @@ namespace MiniProject_MusicPlayer
 			}
 		}
 
-		public string FileName
+        public string Album
+        {
+            get
+            {
+                return _album;
+            }
+            set
+            {
+                _album = value;
+            }
+        }
+
+        public string FileName
 		{
 			get
 			{
@@ -62,12 +75,13 @@ namespace MiniProject_MusicPlayer
 			}
 		}
 
-		public Info(ImageSource Cover, string Title, string Artist, string FileName)
+		public Info(ImageSource Cover, string Title, string Artist, string Album, string FileName)
 		{
 			this.Cover = Cover;
 			this.Title = Title;
 			this.Artist = Artist;
-			this.FileName = FileName;
+            this.Album = Album;
+            this.FileName = FileName;
 		}
 	}
 }

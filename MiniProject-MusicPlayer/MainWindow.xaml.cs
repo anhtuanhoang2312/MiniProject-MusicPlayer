@@ -28,21 +28,49 @@ namespace MiniProject_MusicPlayer
         //    Telerik.Windows.Controls.RadRibbonWindow.IsWindowsThemeEnabled = false;
         //}
 
-        MediaPlayer _audio = new MediaPlayer();
-        DispatcherTimer _timer = new DispatcherTimer();
-		BindingList<Info> _infoList = null;
-		string currentlyPlayingSong = null;
-        bool _isDragging = false;
-        bool _isPlaying = false;
+
+        public static MediaPlayer _audio = new MediaPlayer();
+        public static DispatcherTimer _timer = new DispatcherTimer();
+        public static BindingList<Info> _infoList = new BindingList<Info>();
+        public static BindingList<Playlist> _playlistList = new BindingList<Playlist>();
+        public static string currentlyPlayingSong = null;
+        public static bool _isDragging = false;
+        public static bool _isPlaying = false;
+        public static bool _isExist = false;
+        public static MyMusicPage mymusicpg = new MyMusicPage();
+        public static PlaylistPage playlistpg = new PlaylistPage();
+
+
+
 
         public MainWindow()
         {
             InitializeComponent();
             _timer.Interval = TimeSpan.FromSeconds(0);
             _timer.Tick += timer_Tick;
+
+            Slider.ApplyTemplate();
+            System.Windows.Controls.Primitives.Thumb thumb = (Slider.Template.FindName("PART_Track", Slider) as System.Windows.Controls.Primitives.Track).Thumb;
+            thumb.MouseEnter += new MouseEventHandler(thumb_MouseEnter);
         }
 
-        void timer_Tick(object sender, EventArgs e)
+        public void thumb_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed
+                && e.MouseDevice.Captured == null)
+            {
+                // the left button is pressed on mouse enter
+                // but the mouse isn't captured, so the thumb
+                // must have been moved under the mouse in response
+                // to a click on the track.
+                // Generate a MouseLeftButtonDown event.
+                MouseButtonEventArgs args = new MouseButtonEventArgs(e.MouseDevice, e.Timestamp, MouseButton.Left);
+                args.RoutedEvent = MouseLeftButtonDownEvent;
+                (sender as System.Windows.Controls.Primitives.Thumb).RaiseEvent(args);
+            }
+        }
+
+        public void timer_Tick(object sender, EventArgs e)
         {
             if(!_isDragging)
             {
@@ -52,88 +80,6 @@ namespace MiniProject_MusicPlayer
             Current.Text = String.Format(_audio.Position.ToString(@"mm\:ss"));
             Total.Text = String.Format(_audio.NaturalDuration.TimeSpan.ToString(@"mm\:ss"));
         }
-
-        private void BrowseButton_Click(object sender, RoutedEventArgs e)
-        {
-			ImageSource Cover = null;
-			string Title = null;
-			string Artist = null;
-
-            var screen = new Microsoft.Win32.OpenFileDialog();
-            screen.Filter = "Audio File|*.mp3";
-            screen.Multiselect = true;
-
-            if (screen.ShowDialog() == true)
-            {
-                var filenames = screen.FileNames;
-
-				browseButton.Visibility = Visibility.Hidden;
-
-				BrowseListView.Visibility = Visibility.Visible;
-
-				_infoList = new BindingList<Info>();
-
-				foreach(var filename in filenames)
-				{
-					TagLib.File file = TagLib.File.Create(filename);
-					
-					if(file.Tag.Pictures.Length >= 1)
-					{
-						TagLib.IPicture pic = file.Tag.Pictures[0];
-						System.IO.MemoryStream stream = new System.IO.MemoryStream(pic.Data.Data);
-						BitmapFrame bmp = BitmapFrame.Create(stream);
-						Cover = bmp;
-					}
-					else
-					{
-						BitmapImage bi = new BitmapImage();
-						bi.BeginInit();
-						bi.UriSource = new Uri("/Icon/MusicNote.png", UriKind.Relative);
-						bi.EndInit();
-						Cover = bi;
-					}
-
-					Title = file.Tag.Title;
-					
-					if(file.Tag.AlbumArtists.Length >= 1)
-					{
-						Artist = file.Tag.AlbumArtists[0].ToString();
-					}
-					else
-					{
-						Artist = "Unknown";
-					}
-
-					_infoList.Add(new Info(Cover, Title, Artist, filename));
-				}
-
-				BrowseListView.ItemsSource = _infoList;
-            }
-        }
-
-		private void NowPlaying(string song)
-		{
-			currentlyPlayingSong = song;
-
-			_audio.Open(new Uri(song));
-
-			TagLib.File file = TagLib.File.Create(song);
-			TagLib.IPicture pic = file.Tag.Pictures[0];
-			System.IO.MemoryStream stream = new System.IO.MemoryStream(pic.Data.Data);
-			BitmapFrame bmp = BitmapFrame.Create(stream);
-			cover.Source = bmp;
-
-			string title = file.Tag.Title;
-			Title.Text = title;
-			string[] artist = file.Tag.AlbumArtists;
-			Artist.Text = "Artist \t" + artist[0].ToString();
-			string album = file.Tag.Album;
-			Album.Text = "Album \t" + album;
-			string[] genre = file.Tag.Genres;
-			Genre.Text = "Genre \t" + genre[0].ToString();
-			uint year = file.Tag.Year;
-			Year.Text = "Year \t" + year.ToString();
-		}
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
@@ -149,6 +95,16 @@ namespace MiniProject_MusicPlayer
                 _isPlaying = false;
                 _timer.Stop();
             }
+        }
+
+        public static void SetNowPlaying(string song)
+        {
+            currentlyPlayingSong = song;
+            _audio.Open(new Uri(song));
+        }
+        public static string GetNowPlaying()
+        {
+            return currentlyPlayingSong;
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -171,23 +127,59 @@ namespace MiniProject_MusicPlayer
 
         }
 
-        private void Slider_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
+        public void Slider_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
         {
             _isDragging = true;
         }
 
-        private void Slider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        public void Slider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
             _isDragging = false;
             _audio.Position = TimeSpan.FromSeconds(Slider.Value);
+        }    
+
+        private void AddButton_Click(object sender, RoutedEventArgs e)
+        {
+            Playlist newPlaylist = new Playlist("untitled playlist", new List<Info>());
+            _playlistList.Add(newPlaylist);
+            PlaylistListView.ItemsSource = _playlistList;
         }
 
-		private void PlayMenuItem_Click(object sender, RoutedEventArgs e)
-		{
-			var menu = sender as MenuItem;
-			var info = menu.DataContext as Info;
+        private void PlaylistItem_Click(object sender, RoutedEventArgs e)
+        {
+            Control.Show(MainContent, playlistpg);
+        }
 
-			NowPlaying(info.FileName);
-		}
-	}
+        private void ListViewItem_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            MyListView.SelectedItems.Clear();
+
+            ListViewItem item = sender as ListViewItem;
+            if (item != null)
+            {
+                item.IsSelected = true;
+                MyListView.SelectedItem = item;
+            }
+        }
+
+        private void ListViewItem_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ListViewItem item = sender as ListViewItem;
+            if (item != null && item.IsSelected)
+            {
+                if (item.Name == "MyMusic")
+                {
+                    Control.Show(MainContent, mymusicpg);
+                }
+                else if (item.Name == "NowPlaying")
+                {
+                    Control.Show(MainContent, new NowPlayingPage());
+                }
+                else
+                {
+
+                }
+            }
+        }
+    }
 }

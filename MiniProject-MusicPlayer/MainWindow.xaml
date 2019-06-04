@@ -5,194 +5,166 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MiniProject_MusicPlayer"
         mc:Ignorable="d"
-        Title="Mini Music Player" Height="450" Width="750" RenderOptions.BitmapScalingMode="HighQuality">
+        xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF" 
+        fw:AcrylicWindow.Enabled="True" 
+        FontSize="15" WindowStyle="None" Opacity="90" AllowsTransparency="True" ResizeMode="CanResize" WindowStartupLocation="CenterScreen"
+        Title="Mini Music Player" Height="600" Width="900" RenderOptions.BitmapScalingMode="HighQuality">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="60" />
         </Grid.RowDefinitions>
         
-        <TabControl TabStripPlacement="Left">
-            <TabItem >
-                <TabItem.Header>
-                    <Grid Width="150">
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0" fw:PointerTracker.Enabled="True" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                
+                <StackPanel>
+
+                    <!--StackPanel Orientation="Horizontal">
+                        <Button Foreground="Black" Background="{x:Null}" BorderBrush="{x:Null}">
+                        </Button>
+                        <TextBlock Text="Music Player" FontSize="12" Margin="10" VerticalAlignment="Center"/>
+                    </-->
+
+                    <ListView Name="MyListView" FontSize="15" BorderThickness="0" Background="{x:Null}" BorderBrush="{x:Null}">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListViewItem_PreviewMouseLeftButtonDown" />
+                                <EventSetter Event="PreviewMouseLeftButtonUp" Handler="ListViewItem_PreviewMouseLeftButtonUp" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListViewItem Name="MyMusic" Padding="1">
+                            <Grid>
+                                <Button BorderThickness="0" HorizontalContentAlignment="Left" Background="Transparent">
+                                    <StackPanel Orientation="Horizontal" Background="Transparent">
+                                        <Image Source="/Icon/browse.png" Width="40" Height="40"/>
+                                        <TextBlock Background="Transparent" Text="My music" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+                        </ListViewItem>
+                        <ListViewItem Name="NowPlaying" Padding="1" >
+                            <Button BorderThickness="0" HorizontalContentAlignment="Left" Background="Transparent" Click="NowPlaying_Click">
+                                <StackPanel Orientation="Horizontal" Background="Transparent">
+                                    <Image Source="/Icon/playing.png" Width="40" Height="40"/>
+                                    <TextBlock Background="Transparent" Text="Now Playing" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </ListViewItem>
+                        <ListViewItem Name="RecentPlays" Padding="1" >
+                            <Button BorderThickness="0" HorizontalContentAlignment="Left" Background="Transparent" Click="RecentPlays_Click">
+                                <StackPanel Orientation="Horizontal" Background="Transparent">
+                                    <Image Source="/Icon/playlist.png" Width="40" Height="40"/>
+                                    <TextBlock Background="Transparent" Text="Recent plays" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </ListViewItem>
+                    </ListView>
+
+                    <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="40" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="45"/>
                         </Grid.ColumnDefinitions>
-                        <Image Source="/Icon/browse.png" Width="40" Height="40"/>
-                        <TextBlock Grid.Column="1" FontSize="14" Text="Browse" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+                        <TextBlock Text="Playlists" Margin="15" FontWeight="DemiBold"/>
+                        <Button Grid.Column="1" Name="addButton" Width="45" Height="45" BorderThickness="0" Background="Transparent" Click="AddButton_Click">
+                            <Image HorizontalAlignment="Center" Source="/Icon/add.png" Width="40" Height="40"/>
+                        </Button>
                     </Grid>
-                </TabItem.Header>
-                <Grid>
-                    <Button Content="Choose files..." Name="browseButton" Click="BrowseButton_Click" Background="WhiteSmoke" HorizontalAlignment="Center" Width="100" Height="25"/>
-                    <ListView Name="BrowseListView" Visibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                </StackPanel>
+
+                <Grid Grid.Row="1">
+                    <ListView Name="PlaylistListView" FontSize="15" BorderThickness="0" Background="{x:Null}" BorderBrush="{x:Null}"                             
+                        ScrollViewer.CanContentScroll="False">
                         <ListView.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <WrapPanel Orientation="Horizontal"/>
+                                <WrapPanel Orientation="Vertical" HorizontalAlignment="Left"/>
                             </ItemsPanelTemplate>
                         </ListView.ItemsPanel>
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel Width="100" Height="135" Margin="10, 5, 10, 0">
-                                    <StackPanel.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem Header="Play" Click="PlayMenuItem_Click"/>
-                                            <MenuItem Header="Add to playlist"/>
-                                        </ContextMenu>
-                                    </StackPanel.ContextMenu>
-                                    <Image Source="{Binding Cover}" Width="100" Height="100"/>
-                                    <TextBlock Text="{Binding Title}"/>
-                                    <TextBlock Text="{Binding Artist}"/>
-                                </StackPanel>
+                                <Button Name="PlaylistItem" BorderThickness="0" HorizontalContentAlignment="Left" Background="Transparent" Click="PlaylistItem_Click">
+                                    <TextBlock Margin="10, 10" Background="Transparent" Text="{Binding Name}" VerticalAlignment="Center"/>
+                                </Button>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
                 </Grid>
-            </TabItem>
+            </Grid>
 
-            <TabItem >
-                <TabItem.Header>
-                    <Grid Width="150">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="40" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Image Source="/Icon/playing.png" Width="40" Height="40"/>
-                        <TextBlock Grid.Column="1" FontSize="14" Text="Now playing" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    </Grid>
-                </TabItem.Header>
+            <Grid Name="MainContent" Grid.Column="1" Grid.RowSpan="2"  Background="#FFFFFFFF">
+            </Grid>
+        </Grid>
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="2*" />
-                        <ColumnDefinition Width="2*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="2*" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-
-                    <Viewbox Grid.Column="1" Grid.Row="1">
-                        <Image Name="cover" Width="400" Height="400"/>
-                    </Viewbox>
-
-                    <WrapPanel Grid.Column="2" Grid.Row="1" Orientation="Vertical">
-                        <TextBlock FontSize="16" Name ="Title" FontWeight="Bold"/>
-
-                        <WrapPanel Orientation="Horizontal">
-                            <TextBlock FontSize="16" Name="Artist" />
-                            <!--TextBlock FontSize="14" Text="{Binding Path=Text, ElementName=txtValue}" /-->
-                        </WrapPanel>
-
-                        <WrapPanel Orientation="Horizontal">
-                            <TextBlock FontSize="16" Name="Album" />
-                            <!--TextBlock FontSize="14" Text="{Binding Path=Text, ElementName=txtValue}" /-->
-                        </WrapPanel>
-
-                        <WrapPanel Orientation="Horizontal">
-                            <TextBlock FontSize="16" Name="Genre" />
-                            <!--TextBlock FontSize="14" Text="{Binding Path=Text, ElementName=txtValue}" /-->
-                        </WrapPanel>
-
-                        <WrapPanel Orientation="Horizontal">
-                            <TextBlock FontSize="16" Name="Year" />
-                            <!--TextBlock FontSize="14" Text="{Binding Path=Text, ElementName=txtValue}" /-->
-                        </WrapPanel>
-                    </WrapPanel>
-                </Grid>
-            </TabItem>
-
-            <TabItem >
-                <TabItem.Header>
-                    <Grid Width="150">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="40" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Image Source="/Icon/playlist.png" Width="40" Height="40"/>
-                        <TextBlock Grid.Column="1" FontSize="14" Text="Playlists" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    </Grid>
-                </TabItem.Header>
-            </TabItem>
-
-            <TabItem >
-                <TabItem.Header>
-                    <Grid Width="150">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="40" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Image Source="/Icon/about.png" Width="40" Height="40"/>
-                        <TextBlock Grid.Column="1" FontSize="14" Text="About" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    </Grid>
-                </TabItem.Header>
-            </TabItem>
-        </TabControl>
-        
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10" />
-                <ColumnDefinition Width="50" />
+                <ColumnDefinition Width="60" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="50" />
-                <ColumnDefinition Width="50" />
-                <ColumnDefinition Width="50" />
-                <ColumnDefinition Width="50" />
-                <ColumnDefinition Width="50" />
-                <ColumnDefinition Width="50" />
-                
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="60" />
             </Grid.ColumnDefinitions>
 
             <TextBlock Name="Current" Grid.Column="1" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            
+
             <Slider Name="Slider" Grid.Column="2" Margin="10" 
                     Thumb.DragStarted="Slider_DragStarted" 
                     Thumb.DragCompleted="Slider_DragCompleted"                   
                     VerticalAlignment="Center"
-                    IsMoveToPointEnabled="True"/>
-            
+                    IsMoveToPointEnabled="True">
+            </Slider>
+
             <TextBlock Grid.Column="3" FontSize="14" Name="Total" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
             <Button Grid.Column="4" Name="backButton" 
                     Width="60" Height="60" Click="BackButton_Click"
                     BorderThickness="0" 
-                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                    Background="Transparent">
                 <Image Source="/Icon/back.png" Width="40" Height="40"/>
             </Button>
 
             <Button Grid.Column="5" Name="playButton" 
                     Width="60" Height="60" Click="PlayButton_Click"
                     BorderThickness="0" 
-                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                    Background="Transparent">
                 <Image Source="/Icon/play.png" Width="40" Height="40"/>
             </Button>
 
             <Button Grid.Column="6" Name="nextButton" 
                     Width="60" Height="60" Click="NextButton_Click"
                     BorderThickness="0" 
-                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                    Background="Transparent">
                 <Image Source="/Icon/next.png" Width="40" Height="40"/>
             </Button>
 
             <Button Grid.Column="7" Name="shuffleButton"
                     Width="60" Height="60" Click="ShuffleButton_Click"
                     BorderThickness="0" 
-                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                    Background="Transparent">
                 <Image Source="/Icon/shuffle.png" Width="40" Height="40"/>
             </Button>
 
             <Button Grid.Column="8" Name="repeatButton"
                     Width="60" Height="60" Click="RepeatButton_Click"
                     BorderThickness="0" 
-                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                    Background="Transparent">
                 <Image Source="/Icon/repeat.png" Width="40" Height="40"/>
             </Button>
-
         </Grid>
-
     </Grid>
 </Window>
