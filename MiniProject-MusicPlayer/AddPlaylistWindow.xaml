@@ -1,0 +1,34 @@
+﻿<Window x:Class="MiniProject_MusicPlayer.PlaylistNameWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MiniProject_MusicPlayer"
+        mc:Ignorable="d"
+        Title="New playlist" Height="200" Width="500" ResizeMode="NoResize">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <GroupBox Header="Create new playlist" FontSize="15" Margin="10,5,10,0" Padding="5">
+            <Grid>
+                <StackPanel HorizontalAlignment="Center" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center" Margin="0,10,10,0" FontSize="15" Height="30" Text="Playlist name"/>
+                    <TextBox Name="NameBox" FontSize="17" Width="260" Height="25"/>
+                    <Button Name="CreateBtn" Click="CreateBtn_Click" Margin="10,0,0,0" VerticalAlignment="Center" IsDefault="True" FontSize="15" Content="Create" Background="WhiteSmoke" Width="70" Height="25"/>
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Header="Import existing playlists" FontSize="15" Grid.Row="1" Margin="10,5,10,10" Padding="5">
+            <Grid>
+
+                <Button Name="BrowseBtn" Click="BrowseBtn_Click"  Margin="10,0,0,0" VerticalAlignment="Center" IsDefault="True" FontSize="15" Content="Browse" Background="WhiteSmoke" Width="70" Height="25"/>
+                <!--Button Grid.Column="1" Name="cancelBtn" VerticalAlignment="Center" IsCancel="True" Content="Cancel" FontSize="15" Background="WhiteSmoke" Width="70" Height="25"/-->
+            </Grid>
+        </GroupBox>
+
+    </Grid>
+</Window>

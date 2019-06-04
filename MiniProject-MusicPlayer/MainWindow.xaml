@@ -54,7 +54,7 @@
                             </Grid>
                         </ListViewItem>
                         <ListViewItem Name="NowPlaying" Padding="1" >
-                            <Button BorderThickness="0" HorizontalContentAlignment="Left" Background="Transparent" Click="NowPlaying_Click">
+                            <Button BorderThickness="0" HorizontalContentAlignment="Left" Background="Transparent">
                                 <StackPanel Orientation="Horizontal" Background="Transparent">
                                     <Image Source="/Icon/playing.png" Width="40" Height="40"/>
                                     <TextBlock Background="Transparent" Text="Now Playing" VerticalAlignment="Center"/>
@@ -62,7 +62,7 @@
                             </Button>
                         </ListViewItem>
                         <ListViewItem Name="RecentPlays" Padding="1" >
-                            <Button BorderThickness="0" HorizontalContentAlignment="Left" Background="Transparent" Click="RecentPlays_Click">
+                            <Button BorderThickness="0" HorizontalContentAlignment="Left" Background="Transparent">
                                 <StackPanel Orientation="Horizontal" Background="Transparent">
                                     <Image Source="/Icon/playlist.png" Width="40" Height="40"/>
                                     <TextBlock Background="Transparent" Text="Recent plays" VerticalAlignment="Center"/>
@@ -87,6 +87,12 @@
                 <Grid Grid.Row="1">
                     <ListView Name="PlaylistListView" FontSize="15" BorderThickness="0" Background="{x:Null}" BorderBrush="{x:Null}"                             
                         ScrollViewer.CanContentScroll="False">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListViewItem_PreviewMouseLeftButtonDown" />
+                                <EventSetter Event="PreviewMouseLeftButtonUp" Handler="ListViewItem_PreviewMouseLeftButtonUp" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
                         <ListView.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <WrapPanel Orientation="Vertical" HorizontalAlignment="Left"/>
@@ -94,7 +100,7 @@
                         </ListView.ItemsPanel>
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <Button Name="PlaylistItem" BorderThickness="0" HorizontalContentAlignment="Left" Background="Transparent" Click="PlaylistItem_Click">
+                                <Button BorderThickness="0" HorizontalContentAlignment="Left" Background="Transparent">
                                     <TextBlock Margin="10, 10" Background="Transparent" Text="{Binding Name}" VerticalAlignment="Center"/>
                                 </Button>
                             </DataTemplate>

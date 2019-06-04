@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ namespace MiniProject_MusicPlayer
     public class Playlist
     {
         public string _name;
-        public List<Info>_song;
+        public BindingList<Info> _song;
 
         public string Name
         {
@@ -23,7 +24,7 @@ namespace MiniProject_MusicPlayer
             }
         }
 
-        public List<Info> Song
+        public BindingList<Info> Song
         {
             get
             {
@@ -35,7 +36,7 @@ namespace MiniProject_MusicPlayer
             }
         }
       
-        public Playlist(string Name, List<Info> Song)
+        public Playlist(string Name, BindingList<Info> Song)
         {
             this._name = Name;
             this._song = Song;

@@ -28,7 +28,6 @@ namespace MiniProject_MusicPlayer
         //    Telerik.Windows.Controls.RadRibbonWindow.IsWindowsThemeEnabled = false;
         //}
 
-
         public static MediaPlayer _audio = new MediaPlayer();
         public static DispatcherTimer _timer = new DispatcherTimer();
         public static BindingList<Info> _infoList = new BindingList<Info>();
@@ -40,12 +39,10 @@ namespace MiniProject_MusicPlayer
         public static MyMusicPage mymusicpg = new MyMusicPage();
         public static PlaylistPage playlistpg = new PlaylistPage();
 
-
-
-
         public MainWindow()
         {
             InitializeComponent();
+
             _timer.Interval = TimeSpan.FromSeconds(0);
             _timer.Tick += timer_Tick;
 
@@ -136,35 +133,52 @@ namespace MiniProject_MusicPlayer
         {
             _isDragging = false;
             _audio.Position = TimeSpan.FromSeconds(Slider.Value);
-        }    
-
-        private void AddButton_Click(object sender, RoutedEventArgs e)
-        {
-            Playlist newPlaylist = new Playlist("untitled playlist", new List<Info>());
-            _playlistList.Add(newPlaylist);
-            PlaylistListView.ItemsSource = _playlistList;
         }
 
-        private void PlaylistItem_Click(object sender, RoutedEventArgs e)
+        public void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            Control.Show(MainContent, playlistpg);
+            var newplaylist = new PlaylistNameWindow();
+
+            if (newplaylist.ShowDialog() == true)
+            {
+                Playlist newPlaylist = new Playlist(newplaylist.ListName, new BindingList<Info>());
+                _playlistList.Add(newPlaylist);
+                PlaylistListView.ItemsSource = _playlistList;
+            }
         }
 
         private void ListViewItem_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             MyListView.SelectedItems.Clear();
+            PlaylistListView.SelectedItems.Clear();
 
             ListViewItem item = sender as ListViewItem;
             if (item != null)
             {
                 item.IsSelected = true;
                 MyListView.SelectedItem = item;
+                PlaylistListView.SelectedItem = item;
             }
         }
+
+        //public int FindPlaylist(BindingList<Playlist> p, string name)
+        //{
+        //    int index = -1;
+        //    for (int i = 0; i < p.Count; i++)
+        //    {
+        //        if (p[i].Name == name)
+        //        {
+        //            index = i;
+        //            break;
+        //        }
+        //    }
+        //    return index;
+        //}
 
         private void ListViewItem_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ListViewItem item = sender as ListViewItem;
+
             if (item != null && item.IsSelected)
             {
                 if (item.Name == "MyMusic")
@@ -175,9 +189,23 @@ namespace MiniProject_MusicPlayer
                 {
                     Control.Show(MainContent, new NowPlayingPage());
                 }
+                else if (item.Name == "NowPlaying")
+                {
+                    Control.Show(MainContent, new NowPlayingPage());
+                }
                 else
                 {
+                    int index = PlaylistListView.SelectedIndex;
 
+                    if (index != -1)
+                    {
+                        Playlist items = (Playlist)PlaylistListView.Items.GetItemAt(index);
+                        if (items != null)
+                        {
+                            playlistpg.CurrentPlaylist = items._song;
+                            Control.Show(MainContent, playlistpg);
+                        }
+                    }
                 }
             }
         }

@@ -21,7 +21,15 @@
                     <GridViewColumn Header="Mail" Width="150" DisplayMemberBinding="{Binding Album}" />
                 </GridView>
             </ListView.View>
-</ListView>-->
-
+        </ListView>-->
+        <ListView Name="PlayListListView">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="TITLE" Width="300" DisplayMemberBinding="{Binding Title}" />
+                    <GridViewColumn Header="ARTIST" Width="200" DisplayMemberBinding="{Binding Artist}" />
+                    <GridViewColumn Header="ALBUM" Width="200" DisplayMemberBinding="{Binding Album}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
     </Grid>
 </UserControl>
