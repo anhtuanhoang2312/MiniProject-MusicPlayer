@@ -7,8 +7,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Button Content="Choose files..." Name="browseButton" Click="BrowseButton_Click" Visibility="Hidden" Background="WhiteSmoke" HorizontalAlignment="Center" Width="100" Height="25"/>
-        <ListView Background="#01FFFFFF" FontSize="14" BorderThickness="0" Name="BrowseListView" Visibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalAlignment="Stretch">
+        <Button Content="Browse" Name="browseButton" FontSize="15" Click="BrowseButton_Click" Visibility="Hidden" Background="WhiteSmoke" HorizontalAlignment="Center" Width="70" Height="35" Style="{StaticResource ButtonRevealStyle}"/>
+        <ListView Background="#FFFFFFFF" FontSize="14" BorderThickness="0" Name="BrowseListView" Visibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalAlignment="Stretch">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel Orientation="Horizontal" HorizontalAlignment="Left"/>

@@ -1,4 +1,4 @@
-﻿<Window x:Class="MiniProject_MusicPlayer.MainWindow"
+﻿<fw:AcrylicWindow x:Class="MiniProject_MusicPlayer.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,16 +7,49 @@
         mc:Ignorable="d"
         xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF" 
         fw:AcrylicWindow.Enabled="True" 
-        FontSize="15" WindowStyle="None" Opacity="90" AllowsTransparency="True" ResizeMode="CanResize" WindowStartupLocation="CenterScreen"
-        Title="Mini Music Player" Height="600" Width="900" RenderOptions.BitmapScalingMode="HighQuality">
+        MouseLeftButtonDown="Window_MouseDown"
+        FontSize="15" WindowStyle="None" Opacity="50" AllowsTransparency="True" ResizeMode="CanResize" WindowStartupLocation="CenterScreen"
+        Title="Mini Music Player" AcrylicWindowStyle="None" Height="600" Width="900" RenderOptions.BitmapScalingMode="HighQuality">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="60" />
         </Grid.RowDefinitions>
-        
 
-        <Grid>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal">
+                <Button Foreground="Black" Background="{x:Null}" BorderBrush="{x:Null}">
+                </Button>
+                <TextBlock Text="Music Player" FontSize="15" Margin="10" VerticalAlignment="Center"/>
+            </StackPanel>
+            
+            <Grid Grid.Column="1" Background="#FFFFFFFF">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" WindowChrome.IsHitTestVisibleInChrome="True">
+                    <Button Click="Minimize_Click" Content="&#xE949;" FontFamily="Segoe MDL2 Assets" FontSize="10" Padding="15,15,15,5" Background="Transparent" BorderBrush="Transparent" Style="{StaticResource ButtonRevealStyle}"/>
+                    <Button Click="Maximize_Click" FontFamily="Segoe MDL2 Assets" FontSize="10" Padding="15,10" Background="Transparent" BorderBrush="Transparent">
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonRevealStyle}">
+                                <Setter Property="Button.Content" Value="&#xE739;" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=WindowState}" Value="Maximized">
+                                        <Setter Property="Button.Content" Value="&#xE923;" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Click="Close_Click" Content="&#xE106;" FontFamily="Segoe MDL2 Assets" FontSize="10" Padding="15,10" Background="Transparent" BorderBrush="Transparent" Style="{StaticResource ButtonRevealStyle}"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+         
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200"/>
                 <ColumnDefinition Width="*"/>
@@ -27,20 +60,21 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                
+
                 <StackPanel>
-
-                    <!--StackPanel Orientation="Horizontal">
-                        <Button Foreground="Black" Background="{x:Null}" BorderBrush="{x:Null}">
-                        </Button>
-                        <TextBlock Text="Music Player" FontSize="12" Margin="10" VerticalAlignment="Center"/>
-                    </-->
-
                     <ListView Name="MyListView" FontSize="15" BorderThickness="0" Background="{x:Null}" BorderBrush="{x:Null}">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListViewItem_PreviewMouseLeftButtonDown" />
                                 <EventSetter Event="PreviewMouseLeftButtonUp" Handler="ListViewItem_PreviewMouseLeftButtonUp" />
+                                <Setter Property="Background" Value="Transparent" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                            <ContentPresenter />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
                             </Style>
                         </ListView.ItemContainerStyle>
                         <ListViewItem Name="MyMusic" Padding="1">
@@ -74,23 +108,40 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="45"/>
+                            <ColumnDefinition Width="42"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="Playlists" Margin="15" FontWeight="DemiBold"/>
-                        <Button Grid.Column="1" Name="addButton" Width="45" Height="45" BorderThickness="0" Background="Transparent" Click="AddButton_Click">
-                            <Image HorizontalAlignment="Center" Source="/Icon/add.png" Width="40" Height="40"/>
+                        <TextBlock Text="Playlists" Margin="12" FontWeight="DemiBold"/>
+                        <Button Grid.Column="1" Name="addButton" Width="40" Height="40" BorderThickness="0" Background="Transparent" Style="{StaticResource ButtonRevealStyle}">
+                            <Menu Style="{StaticResource AcrylicMenuStyle}" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                <MenuItem>
+                                    <MenuItem.Header>
+                                        <Image Source="/Icon/add.png" Width="35" Height="35" Margin="-5.5,0,-5,0"/>
+                                    </MenuItem.Header>
+                                    <MenuItem Header="New" Click="New_Click"/>
+                                    <MenuItem Header="Import" Click="Import_Click"/>
+                                </MenuItem>
+                            </Menu>
                         </Button>
+                        
                     </Grid>
                 </StackPanel>
 
                 <Grid Grid.Row="1">
                     <ListView Name="PlaylistListView" FontSize="15" BorderThickness="0" Background="{x:Null}" BorderBrush="{x:Null}"                             
-                        ScrollViewer.CanContentScroll="False">
+                        ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListViewItem_PreviewMouseLeftButtonDown" />
                                 <EventSetter Event="PreviewMouseLeftButtonUp" Handler="ListViewItem_PreviewMouseLeftButtonUp" />
+                                <Setter Property="Background" Value="Transparent" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                            <ContentPresenter />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
                             </Style>
                         </ListView.ItemContainerStyle>
                         <ListView.ItemsPanel>
@@ -100,8 +151,10 @@
                         </ListView.ItemsPanel>
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <Button BorderThickness="0" HorizontalContentAlignment="Left" Background="Transparent">
-                                    <TextBlock Margin="10, 10" Background="Transparent" Text="{Binding Name}" VerticalAlignment="Center"/>
+                                <Button Width="200" BorderThickness="0" HorizontalContentAlignment="Left" Background="Transparent">
+                                    <StackPanel Orientation="Horizontal" Background="Transparent">
+                                        <TextBlock Margin="10, 10" Background="Transparent" Text="{Binding Name}" VerticalAlignment="Center"/>
+                                    </StackPanel>
                                 </Button>
                             </DataTemplate>
                         </ListView.ItemTemplate>
@@ -109,11 +162,11 @@
                 </Grid>
             </Grid>
 
-            <Grid Name="MainContent" Grid.Column="1" Grid.RowSpan="2"  Background="#FFFFFFFF">
+            <Grid Name="MainContent" Grid.Column="1" Grid.RowSpan="2" Background="#FFFFFFFF">
             </Grid>
         </Grid>
 
-        <Grid Grid.Row="1" >
+        <Grid Grid.Row="2" Background="{Binding Path=(fw:AccentColors.ImmersiveSystemAccentBrush)}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="60" />
@@ -126,51 +179,60 @@
                 <ColumnDefinition Width="60" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Name="Current" Grid.Column="1" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <TextBlock Name="Current" Grid.Column="1" FontSize="15" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
             <Slider Name="Slider" Grid.Column="2" Margin="10" 
                     Thumb.DragStarted="Slider_DragStarted" 
                     Thumb.DragCompleted="Slider_DragCompleted"                   
                     VerticalAlignment="Center"
                     IsMoveToPointEnabled="True">
+                
             </Slider>
 
-            <TextBlock Grid.Column="3" FontSize="14" Name="Total" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="3" FontSize="15" Name="Total" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
             <Button Grid.Column="4" Name="backButton" 
                     Width="60" Height="60" Click="BackButton_Click"
                     BorderThickness="0" 
-                    Background="Transparent">
+                    Background="Transparent"
+                    Style="{StaticResource ButtonRevealStyle}">
                 <Image Source="/Icon/back.png" Width="40" Height="40"/>
             </Button>
 
             <Button Grid.Column="5" Name="playButton" 
                     Width="60" Height="60" Click="PlayButton_Click"
                     BorderThickness="0" 
-                    Background="Transparent">
+                    Background="Transparent"
+                    Style="{StaticResource ButtonRevealStyle}">
                 <Image Source="/Icon/play.png" Width="40" Height="40"/>
             </Button>
 
             <Button Grid.Column="6" Name="nextButton" 
                     Width="60" Height="60" Click="NextButton_Click"
                     BorderThickness="0" 
-                    Background="Transparent">
+                    Background="Transparent"
+                    Style="{StaticResource ButtonRevealStyle}">
                 <Image Source="/Icon/next.png" Width="40" Height="40"/>
             </Button>
 
             <Button Grid.Column="7" Name="shuffleButton"
                     Width="60" Height="60" Click="ShuffleButton_Click"
                     BorderThickness="0" 
-                    Background="Transparent">
+                    Background="Transparent"
+                    Style="{StaticResource ButtonRevealStyle}">
                 <Image Source="/Icon/shuffle.png" Width="40" Height="40"/>
             </Button>
 
             <Button Grid.Column="8" Name="repeatButton"
                     Width="60" Height="60" Click="RepeatButton_Click"
                     BorderThickness="0" 
-                    Background="Transparent">
+                    Background="Transparent"
+                    Style="{StaticResource ButtonRevealStyle}">
                 <Image Source="/Icon/repeat.png" Width="40" Height="40"/>
             </Button>
         </Grid>
     </Grid>
-</Window>
+
+
+
+</fw:AcrylicWindow>

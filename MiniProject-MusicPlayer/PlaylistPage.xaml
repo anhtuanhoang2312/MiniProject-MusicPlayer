@@ -6,8 +6,7 @@
              xmlns:local="clr-namespace:MiniProject_MusicPlayer"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <TextBlock Text="Playlist" FontSize="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+    <Grid >
         <!--<ListView>
             <ListView.View>
                 <GridView>
@@ -22,10 +21,10 @@
                 </GridView>
             </ListView.View>
         </ListView>-->
-        <ListView Name="PlayListListView">
+        <ListView Name="PlayListListView" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="TITLE" Width="300" DisplayMemberBinding="{Binding Title}" />
+                    <GridViewColumn Header="TITLE" Width="250" DisplayMemberBinding="{Binding Title}" />
                     <GridViewColumn Header="ARTIST" Width="200" DisplayMemberBinding="{Binding Artist}" />
                     <GridViewColumn Header="ALBUM" Width="200" DisplayMemberBinding="{Binding Album}" />
                 </GridView>

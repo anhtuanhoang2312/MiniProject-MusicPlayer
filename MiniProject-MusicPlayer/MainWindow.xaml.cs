@@ -20,8 +20,9 @@ namespace MiniProject_MusicPlayer
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
+
         //static MainWindow()
         //{
         //    Telerik.Windows.Controls.StyleManager.ApplicationTheme = new Telerik.Windows.Controls.FluentTheme();
@@ -42,6 +43,7 @@ namespace MiniProject_MusicPlayer
         public MainWindow()
         {
             InitializeComponent();
+            Control.Show(MainContent, mymusicpg);
 
             _timer.Interval = TimeSpan.FromSeconds(0);
             _timer.Tick += timer_Tick;
@@ -69,7 +71,7 @@ namespace MiniProject_MusicPlayer
 
         public void timer_Tick(object sender, EventArgs e)
         {
-            if(!_isDragging)
+            if (!_isDragging)
             {
                 Slider.Value = _audio.Position.TotalSeconds;
                 Slider.Maximum = _audio.NaturalDuration.TimeSpan.TotalSeconds;
@@ -135,9 +137,9 @@ namespace MiniProject_MusicPlayer
             _audio.Position = TimeSpan.FromSeconds(Slider.Value);
         }
 
-        public void AddButton_Click(object sender, RoutedEventArgs e)
+        public void New_Click(object sender, RoutedEventArgs e)
         {
-            var newplaylist = new PlaylistNameWindow();
+            var newplaylist = new AddPlaylistWindow();
 
             if (newplaylist.ShowDialog() == true)
             {
@@ -207,6 +209,48 @@ namespace MiniProject_MusicPlayer
                         }
                     }
                 }
+            }
+        }
+
+        private void Minimize_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void Maximize_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.WindowState == WindowState.Normal)
+            {
+                this.WindowState = WindowState.Maximized;
+            }
+            else
+            {
+                this.WindowState = WindowState.Normal;
+            }
+        }
+
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (Mouse.LeftButton == MouseButtonState.Pressed)
+            {
+                this.DragMove();
+            }
+        }
+
+        private void Import_Click(object sender, RoutedEventArgs e)
+        {
+            var screen = new Microsoft.Win32.OpenFileDialog();
+            screen.Filter = "Text File|*.txt";
+            screen.Multiselect = true;
+
+            if (screen.ShowDialog() == true)
+            {
+
             }
         }
     }

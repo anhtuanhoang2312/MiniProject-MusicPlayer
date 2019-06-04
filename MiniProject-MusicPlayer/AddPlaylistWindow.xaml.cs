@@ -17,11 +17,11 @@ namespace MiniProject_MusicPlayer
     /// <summary>
     /// Interaction logic for PlaylistNameWindow.xaml
     /// </summary>
-    public partial class PlaylistNameWindow : Window
+    public partial class AddPlaylistWindow
     {
         public string ListName = "";
 
-        public PlaylistNameWindow()
+        public AddPlaylistWindow()
         {
             InitializeComponent();
         }
@@ -30,18 +30,6 @@ namespace MiniProject_MusicPlayer
         {
             ListName = NameBox.Text;
             this.DialogResult = true;
-        }
-
-        private void BrowseBtn_Click(object sender, RoutedEventArgs e)
-        {
-            var screen = new Microsoft.Win32.OpenFileDialog();
-            screen.Filter = "Text File|*.txt";
-            screen.Multiselect = true;
-
-            if (screen.ShowDialog() == true)
-            {
-
-            }
         }
     }
 }

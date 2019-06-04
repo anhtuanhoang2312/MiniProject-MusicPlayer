@@ -135,10 +135,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
+    <Resource Include="Icon\about.png" />
     <Resource Include="Icon\add.png" />
     <Resource Include="Icon\back.png" />
-    <Resource Include="Icon\menu.png" />
+    <Resource Include="Icon\browse.png" />
     <Resource Include="Icon\next.png" />
     <Resource Include="Icon\pause.png" />
     <Resource Include="Icon\play.png" />
@@ -148,15 +150,6 @@
     <Resource Include="Icon\repeat.png" />
     <Resource Include="Icon\shuffle %281%29.png" />
     <Resource Include="Icon\shuffle.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icon\about.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icon\browse.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icon\MusicNote.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
