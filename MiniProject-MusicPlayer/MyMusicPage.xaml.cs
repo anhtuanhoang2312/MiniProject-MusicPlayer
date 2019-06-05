@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.ComponentModel;
 
 namespace MiniProject_MusicPlayer
 {
@@ -20,6 +21,8 @@ namespace MiniProject_MusicPlayer
     /// </summary>
     public partial class MyMusicPage : UserControl
     {
+		public static string selectedPlayListName = null;
+
         public MyMusicPage()
         {
             InitializeComponent();
@@ -124,6 +127,38 @@ namespace MiniProject_MusicPlayer
 			var info = menu.DataContext as Info;
 
 			MainWindow._infoList.Remove(info);
+		}
+
+		private void NewPlaylistMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			var newplaylist = new AddPlaylistWindow();
+
+			if (newplaylist.ShowDialog() == true)
+			{
+				Playlist newPlaylist = new Playlist(newplaylist.ListName, new BindingList<Info>());
+				MainWindow._playlistList.Add(newPlaylist);
+
+				//Can them cai playlistListView o day
+				//
+			}
+		}
+
+		private void AddToPlaylistMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			var screen = new AddMusicToPlaylist();
+			var menu = sender as MenuItem;
+			var info = menu.DataContext as Info;
+
+			if (screen.ShowDialog() == true)
+			{
+				foreach(var playlist in MainWindow._playlistList)
+				{
+					if(playlist.Name == selectedPlayListName)
+					{
+						playlist.Song.Add(info);
+					}
+				}
+			}
 		}
 	}
 }

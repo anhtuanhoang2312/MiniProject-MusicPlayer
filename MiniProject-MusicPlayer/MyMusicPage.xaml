@@ -21,7 +21,8 @@
                             <ContextMenu>
                                 <MenuItem Header="Play" Click="PlayMenuItem_Click"/>
                                 <MenuItem Header="Remove" Click="RemoveMenuItem_Click"/>
-                                <MenuItem Header="Add to playlist"/>
+                                <MenuItem Header="New Playlist" Click="NewPlaylistMenuItem_Click"/>
+                                <MenuItem Header="Add to playlist..." Click="AddToPlaylistMenuItem_Click"/>
                             </ContextMenu>
                         </StackPanel.ContextMenu>
                         <Image Source="{Binding Cover}" Width="105" Height="105"/>
