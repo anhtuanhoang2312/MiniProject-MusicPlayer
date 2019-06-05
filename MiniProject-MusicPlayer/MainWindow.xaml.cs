@@ -37,9 +37,9 @@ namespace MiniProject_MusicPlayer
         public static bool _isDragging = false;
         public static bool _isPlaying = false;
         public static bool _isExist = false;
-		public static bool _isShuffle = false;
-		public static bool _isRepeat = false;
-		public static MyMusicPage mymusicpg = new MyMusicPage();
+        public static bool _isShuffle = false;
+        public static bool _isRepeat = false;
+        public static MyMusicPage mymusicpg = new MyMusicPage();
         public static PlaylistPage playlistpg = new PlaylistPage();
 
         public MainWindow()
@@ -73,72 +73,96 @@ namespace MiniProject_MusicPlayer
 
         public void timer_Tick(object sender, EventArgs e)
         {
+            if (Current.Text == "00:00")
+            {
+                Image img = new Image();
+                string path = string.Format("/Icon/pause.png");
+                img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+                img.Height = 40;
+                img.Width = 40;
+
+                playButton.Content = img;
+            }
+
             if (!_isDragging)
             {
                 Slider.Value = _audio.Position.TotalSeconds;
                 Slider.Maximum = _audio.NaturalDuration.TimeSpan.TotalSeconds;
             }
+
             Current.Text = String.Format(_audio.Position.ToString(@"mm\:ss"));
             Total.Text = String.Format(_audio.NaturalDuration.TimeSpan.ToString(@"mm\:ss"));
+
+            if (_audio.Position == _audio.NaturalDuration.TimeSpan)
+            {
+                Current.Text = "00:00";
+                Image img = new Image();
+                string path = string.Format("/Icon/play.png");
+                img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+                img.Height = 40;
+                img.Width = 40;
+
+                playButton.Content = img;
+            }
         }
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
             if (!_isPlaying)
             {
-				Image img = new Image();
-				string path = string.Format("/Icon/pause.png");
-				img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
-				img.Height = 40;
-				img.Width = 40;
+                Image img = new Image();
+                string path = string.Format("/Icon/pause.png");
+                img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+                img.Height = 40;
+                img.Width = 40;
 
-				playButton.Content = img;
+                playButton.Content = img;
 
-				_audio.Play();
-				_isPlaying = true;
-				_timer.Start();
-			}
+                _audio.Play();
+                _isPlaying = true;
+                _timer.Start();
+            }
             else
             {
-				Image img = new Image();
-				string path = string.Format("/Icon/play.png");
-				img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
-				img.Height = 40;
-				img.Width = 40;
+                Image img = new Image();
+                string path = string.Format("/Icon/play.png");
+                img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+                img.Height = 40;
+                img.Width = 40;
 
-				playButton.Content = img;
+                playButton.Content = img;
 
-				_audio.Pause();
-				_isPlaying = false;
-				_timer.Stop();
-			}
+                _audio.Pause();
+                _isPlaying = false;
+                _timer.Stop();
+            }
         }
 
-		public void setIMG()
-		{
-			if (!_isPlaying)
-			{
-				Image img = new Image();
-				string path = string.Format("/Icon/pause.png");
-				img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
-				img.Height = 40;
-				img.Width = 40;
+        public void setIMG()
+        {
+            if (!_isPlaying)
+            {
+                Image img = new Image();
+                string path = string.Format("/Icon/pause.png");
+                img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+                img.Height = 40;
+                img.Width = 40;
 
-				playButton.Content = img;
-			}
-			else
-			{
-				Image img = new Image();
-				string path = string.Format("/Icon/play.png");
-				img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
-				img.Height = 40;
-				img.Width = 40;
+                playButton.Content = img;
+            }
+            else
+            {
+                Image img = new Image();
+                string path = string.Format("/Icon/play.png");
+                img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+                img.Height = 40;
+                img.Width = 40;
 
-				playButton.Content = img;
-			}
-		}
+                playButton.Content = img;
+            }
+        }
 
-		public static void SetNowPlaying(string song)
+        public static void SetNowPlaying(string song)
         {
             currentlyPlayingSong = song;
             _audio.Open(new Uri(song));
@@ -160,59 +184,59 @@ namespace MiniProject_MusicPlayer
 
         private void ShuffleButton_Click(object sender, RoutedEventArgs e)
         {
-			if (!_isShuffle)
-			{
-				Image img = new Image();
-				string path = string.Format("/Icon/shuffle (1).png");
-				img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
-				img.Height = 40;
-				img.Width = 40;
+            if (!_isShuffle)
+            {
+                Image img = new Image();
+                string path = string.Format("/Icon/shuffle (1).png");
+                img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+                img.Height = 40;
+                img.Width = 40;
 
-				_isShuffle = true;
+                _isShuffle = true;
 
-				shuffleButton.Content = img;
-			}
-			else
-			{
-				Image img = new Image();
-				string path = string.Format("/Icon/shuffle.png");
-				img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
-				img.Height = 40;
-				img.Width = 40;
+                shuffleButton.Content = img;
+            }
+            else
+            {
+                Image img = new Image();
+                string path = string.Format("/Icon/shuffle.png");
+                img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+                img.Height = 40;
+                img.Width = 40;
 
-				_isShuffle = false;
+                _isShuffle = false;
 
-				shuffleButton.Content = img;
-			}
-		}
+                shuffleButton.Content = img;
+            }
+        }
 
         private void RepeatButton_Click(object sender, RoutedEventArgs e)
         {
-			if (!_isRepeat)
-			{
-				Image img = new Image();
-				string path = string.Format("/Icon/repeat (1).png");
-				img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
-				img.Height = 40;
-				img.Width = 40;
+            if (!_isRepeat)
+            {
+                Image img = new Image();
+                string path = string.Format("/Icon/repeat (1).png");
+                img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+                img.Height = 40;
+                img.Width = 40;
 
-				_isRepeat = true;
+                _isRepeat = true;
 
-				repeatButton.Content = img;
-			}
-			else
-			{
-				Image img = new Image();
-				string path = string.Format("/Icon/repeat.png");
-				img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
-				img.Height = 40;
-				img.Width = 40;
+                repeatButton.Content = img;
+            }
+            else
+            {
+                Image img = new Image();
+                string path = string.Format("/Icon/repeat.png");
+                img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+                img.Height = 40;
+                img.Width = 40;
 
-				_isRepeat = false;
+                _isRepeat = false;
 
-				repeatButton.Content = img;
-			}
-		}
+                repeatButton.Content = img;
+            }
+        }
 
         public void Slider_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
         {
