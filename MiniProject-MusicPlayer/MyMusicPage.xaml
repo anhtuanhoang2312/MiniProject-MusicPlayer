@@ -20,6 +20,7 @@
                         <StackPanel.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Play" Click="PlayMenuItem_Click"/>
+                                <MenuItem Header="Remove" Click="RemoveMenuItem_Click"/>
                                 <MenuItem Header="Add to playlist"/>
                             </ContextMenu>
                         </StackPanel.ContextMenu>

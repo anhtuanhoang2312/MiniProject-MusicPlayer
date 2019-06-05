@@ -203,7 +203,8 @@
                     Width="60" Height="60" Click="PlayButton_Click"
                     BorderThickness="0" 
                     Background="Transparent"
-                    Style="{StaticResource ButtonRevealStyle}">
+                    Style="{StaticResource ButtonRevealStyle}"
+                    x:FieldModifier="public">
                 <Image Source="/Icon/play.png" Width="40" Height="40"/>
             </Button>
 

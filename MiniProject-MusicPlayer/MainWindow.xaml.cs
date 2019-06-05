@@ -37,7 +37,9 @@ namespace MiniProject_MusicPlayer
         public static bool _isDragging = false;
         public static bool _isPlaying = false;
         public static bool _isExist = false;
-        public static MyMusicPage mymusicpg = new MyMusicPage();
+		public static bool _isShuffle = false;
+		public static bool _isRepeat = false;
+		public static MyMusicPage mymusicpg = new MyMusicPage();
         public static PlaylistPage playlistpg = new PlaylistPage();
 
         public MainWindow()
@@ -84,19 +86,59 @@ namespace MiniProject_MusicPlayer
         {
             if (!_isPlaying)
             {
-                _audio.Play();
-                _isPlaying = true;
-                _timer.Start();
-            }
+				Image img = new Image();
+				string path = string.Format("/Icon/pause.png");
+				img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+				img.Height = 40;
+				img.Width = 40;
+
+				playButton.Content = img;
+
+				_audio.Play();
+				_isPlaying = true;
+				_timer.Start();
+			}
             else
             {
-                _audio.Pause();
-                _isPlaying = false;
-                _timer.Stop();
-            }
+				Image img = new Image();
+				string path = string.Format("/Icon/play.png");
+				img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+				img.Height = 40;
+				img.Width = 40;
+
+				playButton.Content = img;
+
+				_audio.Pause();
+				_isPlaying = false;
+				_timer.Stop();
+			}
         }
 
-        public static void SetNowPlaying(string song)
+		public void setIMG()
+		{
+			if (!_isPlaying)
+			{
+				Image img = new Image();
+				string path = string.Format("/Icon/pause.png");
+				img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+				img.Height = 40;
+				img.Width = 40;
+
+				playButton.Content = img;
+			}
+			else
+			{
+				Image img = new Image();
+				string path = string.Format("/Icon/play.png");
+				img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+				img.Height = 40;
+				img.Width = 40;
+
+				playButton.Content = img;
+			}
+		}
+
+		public static void SetNowPlaying(string song)
         {
             currentlyPlayingSong = song;
             _audio.Open(new Uri(song));
@@ -118,13 +160,59 @@ namespace MiniProject_MusicPlayer
 
         private void ShuffleButton_Click(object sender, RoutedEventArgs e)
         {
+			if (!_isShuffle)
+			{
+				Image img = new Image();
+				string path = string.Format("/Icon/shuffle (1).png");
+				img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+				img.Height = 40;
+				img.Width = 40;
 
-        }
+				_isShuffle = true;
+
+				shuffleButton.Content = img;
+			}
+			else
+			{
+				Image img = new Image();
+				string path = string.Format("/Icon/shuffle.png");
+				img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+				img.Height = 40;
+				img.Width = 40;
+
+				_isShuffle = false;
+
+				shuffleButton.Content = img;
+			}
+		}
 
         private void RepeatButton_Click(object sender, RoutedEventArgs e)
         {
+			if (!_isRepeat)
+			{
+				Image img = new Image();
+				string path = string.Format("/Icon/repeat (1).png");
+				img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+				img.Height = 40;
+				img.Width = 40;
 
-        }
+				_isRepeat = true;
+
+				repeatButton.Content = img;
+			}
+			else
+			{
+				Image img = new Image();
+				string path = string.Format("/Icon/repeat.png");
+				img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+				img.Height = 40;
+				img.Width = 40;
+
+				_isRepeat = false;
+
+				repeatButton.Content = img;
+			}
+		}
 
         public void Slider_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
         {

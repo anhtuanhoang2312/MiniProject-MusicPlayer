@@ -92,8 +92,42 @@ namespace MiniProject_MusicPlayer
             var menu = sender as MenuItem;
             var info = menu.DataContext as Info;
 
-            MainWindow.SetNowPlaying(info.FileName);
-            MainWindow._audio.Open(new Uri(info.FileName));
-        }
-    }
+			if (MainWindow._timer.IsEnabled == true && info.FileName != MainWindow.currentlyPlayingSong)
+			{
+				MainWindow._audio.Stop();
+				MainWindow._timer.Stop();
+			}
+
+			MainWindow.SetNowPlaying(info.FileName);
+			MainWindow._audio.Open(new Uri(info.FileName));
+			MainWindow._audio.MediaOpened += _audio_MediaOpened;
+			MainWindow._audio.MediaEnded += _audio_MediaEnded;
+		}
+
+		private void _audio_MediaEnded(object sender, EventArgs e)
+		{
+			MainWindow._isPlaying = false;
+			MainWindow._timer.Stop();
+
+			
+			
+		}
+
+		private void _audio_MediaOpened(object sender, EventArgs e)
+		{
+			MainWindow._audio.Play();
+			MainWindow._isPlaying = true;
+			MainWindow._timer.Start();
+			
+			
+		}
+
+		private void RemoveMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			var menu = sender as MenuItem;
+			var info = menu.DataContext as Info;
+
+			MainWindow._infoList.Remove(info);
+		}
+	}
 }
