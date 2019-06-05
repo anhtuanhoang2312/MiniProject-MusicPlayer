@@ -9,16 +9,16 @@ namespace MiniProject_MusicPlayer.Class
 {
     public class Check : INotifyPropertyChanged
     {
-        private bool _isPlaying = false;
-        public bool IsPlaying
+        private bool _changePlaylist = false;
+        public bool ChangePlaylist
         {
-            get => _isPlaying;
+            get => _changePlaylist;
             set
             {
-                _isPlaying = value;
+                _changePlaylist = value;
                 if (PropertyChanged != null)
                 {
-                    PropertyChanged.Invoke(this, new PropertyChangedEventArgs("IsPlaying"));
+                    PropertyChanged.Invoke(this, new PropertyChangedEventArgs("_ChangePlaylist"));
                 }
             }
         }

@@ -17,19 +17,19 @@ namespace MiniProject_MusicPlayer
 	/// <summary>
 	/// Interaction logic for AddMusicToPlaylist.xaml
 	/// </summary>
-	public partial class AddMusicToPlaylist : Window
+	public partial class AddMusicToPlaylist
 	{
 		public AddMusicToPlaylist()
 		{
 			InitializeComponent();
-			PlayListsListView.ItemsSource = MainWindow._playlistList;
+			AddToPlayListsListView.ItemsSource = MainWindow._playlistList;
 		}
 
 		private void AddButton_Click(object sender, RoutedEventArgs e)
 		{
-			if(PlayListsListView.SelectedItem != null)
+			if(AddToPlayListsListView.SelectedItem != null)
 			{
-				var selected = PlayListsListView.SelectedItem as Playlist;
+				var selected = AddToPlayListsListView.SelectedItem as Playlist;
 				MyMusicPage.selectedPlayListName = selected.Name;
 				this.DialogResult = true;
 			}

@@ -111,7 +111,6 @@ namespace MiniProject_MusicPlayer
 		{
 			MainWindow._isPlaying = false;
 			MainWindow._timer.Stop();
-            //MainWindow._audio.Open(new Uri(MainWindow.GetNowPlaying()));
         }
 
         private void _audio_MediaOpened(object sender, EventArgs e)
@@ -137,9 +136,7 @@ namespace MiniProject_MusicPlayer
 			{
 				Playlist newPlaylist = new Playlist(newplaylist.ListName, new BindingList<Info>());
 				MainWindow._playlistList.Add(newPlaylist);
-
-				//Can them cai playlistListView o day
-				//
+                MainWindow._check.ChangePlaylist = true;
 			}
 		}
 

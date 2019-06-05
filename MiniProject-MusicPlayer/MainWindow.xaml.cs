@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.ComponentModel;
+using MiniProject_MusicPlayer.Class;
 
 namespace MiniProject_MusicPlayer
 {
@@ -22,13 +23,6 @@ namespace MiniProject_MusicPlayer
     /// </summary>
     public partial class MainWindow
     {
-
-        //static MainWindow()
-        //{
-        //    Telerik.Windows.Controls.StyleManager.ApplicationTheme = new Telerik.Windows.Controls.FluentTheme();
-        //    Telerik.Windows.Controls.RadRibbonWindow.IsWindowsThemeEnabled = false;
-        //}
-
         public static MediaPlayer _audio = new MediaPlayer();
         public static DispatcherTimer _timer = new DispatcherTimer();
         public static BindingList<Info> _infoList = new BindingList<Info>();
@@ -41,11 +35,14 @@ namespace MiniProject_MusicPlayer
         public static bool _isRepeat = false;
         public static MyMusicPage mymusicpg = new MyMusicPage();
         public static PlaylistPage playlistpg = new PlaylistPage();
+        public static Check _check = new Check();
 
         public MainWindow()
         {
             InitializeComponent();
             Control.Show(MainContent, mymusicpg);
+
+            _check.PropertyChanged += Check_PropertyChanged;
 
             _timer.Interval = TimeSpan.FromSeconds(0);
             _timer.Tick += timer_Tick;
@@ -248,6 +245,10 @@ namespace MiniProject_MusicPlayer
             _isDragging = false;
             _audio.Position = TimeSpan.FromSeconds(Slider.Value);
         }
+        private void Check_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            PlaylistListView.DataContext = _playlistList;
+        }
 
         public void New_Click(object sender, RoutedEventArgs e)
         {
@@ -257,7 +258,8 @@ namespace MiniProject_MusicPlayer
             {
                 Playlist newPlaylist = new Playlist(newplaylist.ListName, new BindingList<Info>());
                 _playlistList.Add(newPlaylist);
-                PlaylistListView.ItemsSource = _playlistList;
+                //PlaylistListView.ItemsSource = _playlistList;
+                PlaylistListView.DataContext = _playlistList;
             }
         }
 
@@ -313,7 +315,8 @@ namespace MiniProject_MusicPlayer
 
                     if (index != -1)
                     {
-                        Playlist items = (Playlist)PlaylistListView.Items.GetItemAt(index);
+                        //Playlist items = (Playlist)PlaylistListView.Items.GetItemAt(index);
+                        Playlist items = item.Content as Playlist;
                         if (items != null)
                         {
                             playlistpg.CurrentPlaylist = items._song;

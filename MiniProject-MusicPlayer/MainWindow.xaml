@@ -91,7 +91,7 @@
                             <Button BorderThickness="0" HorizontalContentAlignment="Left" Background="Transparent">
                                 <StackPanel Orientation="Horizontal" Background="Transparent">
                                     <Image Source="/Icon/playing.png" Width="40" Height="40"/>
-                                    <TextBlock Background="Transparent" Text="Now Playing" VerticalAlignment="Center"/>
+                                    <TextBlock Background="Transparent" Text="Now playing" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </Button>
                         </ListViewItem>
@@ -129,7 +129,7 @@
 
                 <Grid Grid.Row="1">
                     <ListView Name="PlaylistListView" FontSize="15" BorderThickness="0" Background="{x:Null}" BorderBrush="{x:Null}"                             
-                        ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+                        ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ItemsSource="{Binding}">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListViewItem_PreviewMouseLeftButtonDown" />
