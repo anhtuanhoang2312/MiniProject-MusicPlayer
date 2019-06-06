@@ -133,11 +133,16 @@ namespace MiniProject_MusicPlayer
 		{
 			var newplaylist = new AddPlaylistWindow();
 
+			var menu = sender as MenuItem;
+			var info = menu.DataContext as Info;
+
 			if (newplaylist.ShowDialog() == true)
 			{
 				Playlist newPlaylist = new Playlist(newplaylist.ListName, new BindingList<Info>());
 				MainWindow._playlistList.Add(newPlaylist);
                 MainWindow._check.ChangePlaylist = true;
+
+				newPlaylist.Song.Add(info);
 			}
 		}
 

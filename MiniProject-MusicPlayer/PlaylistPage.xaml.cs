@@ -21,7 +21,7 @@ namespace MiniProject_MusicPlayer
     /// </summary>
     public partial class PlaylistPage : UserControl
     {
-        //public BindingList<Info> _currentPlaylist = new BindingList<Info>();
+        public BindingList<Info> _Playlist = new BindingList<Info>();
 
         //public BindingList<Info> CurrentPlaylist
         //{
@@ -38,13 +38,20 @@ namespace MiniProject_MusicPlayer
         public PlaylistPage(BindingList<Info> temp)
         {
             InitializeComponent();
+
+			_Playlist = temp;
 			
             this.DataContext = this;
 
-			PlayListListViewPage.ItemsSource = temp;
-
-
-			//MessageBox.Show(MainWindow._tempPlaylist[0].Title);
+			PlayListListViewPage.ItemsSource = _Playlist;
 		}
-    }
+
+		private void RemoveMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			if(PlayListListViewPage.SelectedItem != null)
+			{
+				_Playlist.RemoveAt(PlayListListViewPage.SelectedIndex);
+			}
+		}
+	}
 }
