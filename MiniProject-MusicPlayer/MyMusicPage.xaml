@@ -5,9 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MiniProject_MusicPlayer"
              mc:Ignorable="d" 
+             xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF" 
+             fw:AcrylicWindow.Enabled="True" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Button Content="Browse" Name="browseButton" FontSize="15" Click="BrowseButton_Click" Visibility="Hidden" Background="WhiteSmoke" HorizontalAlignment="Center" Width="70" Height="35" Style="{StaticResource ButtonRevealStyle}"/>
+        <Button Content="Browse" Name="browseButton" FontSize="15" Click="BrowseButton_Click" Visibility="Hidden" Background="{Binding Path=(fw:AccentColors.ImmersiveSystemAccentBrush)}" HorizontalAlignment="Center" Width="70" Height="35" Style="{StaticResource ButtonRevealStyle}"/>
         <ListView Background="#FFFFFFFF" FontSize="14" BorderThickness="0" Name="BrowseListView" Visibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalAlignment="Stretch">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -17,12 +19,12 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Width="105" Height="145" Margin="10, 5, 10, 0">
-                        <StackPanel.ContextMenu>
+                        <StackPanel.ContextMenu >
                             <ContextMenu>
                                 <MenuItem Header="Play" Click="PlayMenuItem_Click"/>
                                 <MenuItem Header="Remove" Click="RemoveMenuItem_Click"/>
-                                <MenuItem Header="New Playlist" Click="NewPlaylistMenuItem_Click"/>
-                                <MenuItem Header="Add to playlist..." Click="AddToPlaylistMenuItem_Click"/>
+                                <MenuItem Header="Add to new playlist" Click="NewPlaylistMenuItem_Click"/>
+                                <MenuItem Header="Add to existing playlist" Click="AddToPlaylistMenuItem_Click"/>
                             </ContextMenu>
                         </StackPanel.ContextMenu>
                         <Image Source="{Binding Cover}" Width="105" Height="105"/>
@@ -31,6 +33,15 @@
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}">
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="true" >
+                            <Setter Property="Background" Value="{Binding Path=(fw:AccentColors.ImmersiveSystemAccentBrush)}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.ItemContainerStyle>
         </ListView>
     </Grid>
 </UserControl>

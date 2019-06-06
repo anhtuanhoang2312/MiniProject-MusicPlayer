@@ -12,7 +12,7 @@
     <Grid fw:PointerTracker.Enabled="True" Background="#01FFFFFF">
         <StackPanel HorizontalAlignment="Center" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
             <TextBox Name="NameBox" FontSize="15" Width="270" Height="35" Style="{StaticResource TextBoxRevealStyle}"/>
-            <Button Name="CreateBtn" Click="CreateBtn_Click" Margin="18,0,0,0" IsDefault="True" Style="{StaticResource ButtonRevealStyle}" FontSize="15" Content="Create" Background="WhiteSmoke" HorizontalAlignment="Center" Width="70" Height="35"/>
+            <Button Name="CreateBtn" Click="CreateBtn_Click" Margin="18,0,0,0" IsDefault="True" Style="{StaticResource ButtonRevealStyle}" FontSize="15" Content="Create" Background="{Binding Path=(fw:AccentColors.ImmersiveSystemAccentBrush)}" HorizontalAlignment="Center" Width="70" Height="35"/>
         </StackPanel>
     </Grid>
 </fw:AcrylicWindow>

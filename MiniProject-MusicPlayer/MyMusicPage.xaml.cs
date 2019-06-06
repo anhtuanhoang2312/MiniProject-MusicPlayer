@@ -141,7 +141,6 @@ namespace MiniProject_MusicPlayer
 				Playlist newPlaylist = new Playlist(newplaylist.ListName, new BindingList<Info>());
 				MainWindow._playlistList.Add(newPlaylist);
                 MainWindow._check.ChangePlaylist = true;
-
 				newPlaylist.Song.Add(info);
 			}
 		}

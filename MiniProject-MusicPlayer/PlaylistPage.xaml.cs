@@ -23,18 +23,6 @@ namespace MiniProject_MusicPlayer
     {
         public BindingList<Info> _Playlist = new BindingList<Info>();
 
-        //public BindingList<Info> CurrentPlaylist
-        //{
-        //    get
-        //    {
-        //        return _currentPlaylist;
-        //    }
-        //    set
-        //    {
-        //        _currentPlaylist = value;
-        //    }
-        //}
-
         public PlaylistPage(BindingList<Info> temp)
         {
             InitializeComponent();

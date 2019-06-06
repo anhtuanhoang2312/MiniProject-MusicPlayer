@@ -5,6 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MiniProject_MusicPlayer"
              mc:Ignorable="d" 
+             xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF" 
+             fw:AcrylicWindow.Enabled="True" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -31,23 +33,19 @@
             <TextBlock FontSize="18" Name ="Title" FontWeight="DemiBold"/>
 
             <WrapPanel Orientation="Horizontal">
-                <TextBlock FontSize="18" Name="Artist" />
-                <!--TextBlock FontSize="14" Text="{Binding Path=Text, ElementName=txtValue}" /-->
+                <TextBlock FontSize="18" Name="Artist"/>
             </WrapPanel>
 
             <WrapPanel Orientation="Horizontal">
-                <TextBlock FontSize="18" Name="Album" />
-                <!--TextBlock FontSize="14" Text="{Binding Path=Text, ElementName=txtValue}" /-->
+                <TextBlock FontSize="18" Name="Album"/>
             </WrapPanel>
 
             <WrapPanel Orientation="Horizontal">
-                <TextBlock FontSize="18" Name="Genre" />
-                <!--TextBlock FontSize="14" Text="{Binding Path=Text, ElementName=txtValue}" /-->
+                <TextBlock FontSize="18" Name="Genre"/>
             </WrapPanel>
 
             <WrapPanel Orientation="Horizontal">
-                <TextBlock FontSize="18" Name="Year" />
-                <!--TextBlock FontSize="14" Text="{Binding Path=Text, ElementName=txtValue}" /-->
+                <TextBlock FontSize="18" Name="Year"/>
             </WrapPanel>
         </WrapPanel>
     </Grid>

@@ -21,6 +21,6 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <Button Grid.Row="1" Name="AddButton" Content="Add" Click="AddButton_Click" IsDefault="True" Style="{StaticResource ButtonRevealStyle}" FontSize="15" Background="WhiteSmoke" Width="70" Height="35"/>
+        <Button Grid.Row="1" Name="AddButton" Content="Add" Click="AddButton_Click" IsDefault="True" Background="{Binding Path=(fw:AccentColors.ImmersiveSystemAccentBrush)}" Style="{StaticResource ButtonRevealStyle}" FontSize="15" Width="70" Height="35"/>
     </Grid>
 </fw:AcrylicWindow>
