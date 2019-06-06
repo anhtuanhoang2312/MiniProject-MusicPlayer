@@ -21,24 +21,30 @@ namespace MiniProject_MusicPlayer
     /// </summary>
     public partial class PlaylistPage : UserControl
     {
-        public BindingList<Info> _currentPlaylist = new BindingList<Info>();
+        //public BindingList<Info> _currentPlaylist = new BindingList<Info>();
 
-        public BindingList<Info> CurrentPlaylist
-        {
-            get
-            {
-                return _currentPlaylist;
-            }
-            set
-            {
-                _currentPlaylist = value;
-            }
-        }
+        //public BindingList<Info> CurrentPlaylist
+        //{
+        //    get
+        //    {
+        //        return _currentPlaylist;
+        //    }
+        //    set
+        //    {
+        //        _currentPlaylist = value;
+        //    }
+        //}
 
-        public PlaylistPage()
+        public PlaylistPage(BindingList<Info> temp)
         {
             InitializeComponent();
-            this.DataContext = CurrentPlaylist;
-        }
+			
+            this.DataContext = this;
+
+			PlayListListViewPage.ItemsSource = temp;
+
+
+			//MessageBox.Show(MainWindow._tempPlaylist[0].Title);
+		}
     }
 }

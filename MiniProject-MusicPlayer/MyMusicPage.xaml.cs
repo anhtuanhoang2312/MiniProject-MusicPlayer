@@ -22,6 +22,7 @@ namespace MiniProject_MusicPlayer
     public partial class MyMusicPage : UserControl
     {
 		public static string selectedPlayListName = null;
+		public static BindingList<Info> tempPlaylist = MainWindow._tempPlaylist;
 
         public MyMusicPage()
         {

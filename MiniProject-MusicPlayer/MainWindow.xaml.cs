@@ -34,8 +34,10 @@ namespace MiniProject_MusicPlayer
         public static bool _isShuffle = false;
         public static bool _isRepeat = false;
         public static MyMusicPage mymusicpg = new MyMusicPage();
-        public static PlaylistPage playlistpg = new PlaylistPage();
+        public static PlaylistPage playlistpg = null;
         public static Check _check = new Check();
+
+		public static BindingList<Info> _tempPlaylist = new BindingList<Info>();
 
         public MainWindow()
         {
@@ -319,8 +321,9 @@ namespace MiniProject_MusicPlayer
                         Playlist items = item.Content as Playlist;
                         if (items != null)
                         {
-                            playlistpg.CurrentPlaylist = items._song;
-                            Control.Show(MainContent, playlistpg);
+                            _tempPlaylist = items._song;
+							playlistpg = new PlaylistPage(_tempPlaylist);
+							Control.Show(MainContent, playlistpg);
                         }
                     }
                 }
