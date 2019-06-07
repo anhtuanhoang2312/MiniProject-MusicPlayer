@@ -26,10 +26,29 @@ namespace MiniProject_MusicPlayer
             InitializeComponent();
         }
 
+		private bool isExist(string Name)
+		{
+			foreach(var playlist in MainWindow._playlistList)
+			{
+				if(Name == playlist.Name)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
         private void CreateBtn_Click(object sender, RoutedEventArgs e)
         {
-            ListName = NameBox.Text;
-            this.DialogResult = true;
-        }
+			if (isExist(NameBox.Text))
+			{
+				MessageBox.Show("There is already a playlist with the same name");
+			}
+			else
+			{
+				ListName = NameBox.Text;
+				this.DialogResult = true;
+			}
+		}
     }
 }

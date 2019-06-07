@@ -23,22 +23,25 @@ namespace MiniProject_MusicPlayer
         public NowPlayingPage()
         {
             InitializeComponent();
-            TagLib.File file = TagLib.File.Create(MainWindow.GetNowPlaying());
-            TagLib.IPicture pic = file.Tag.Pictures[0];
-            System.IO.MemoryStream stream = new System.IO.MemoryStream(pic.Data.Data);
-            BitmapFrame bmp = BitmapFrame.Create(stream);
-            cover.Source = bmp;
+            if(MainWindow.currentlyPlayingSong != null)
+			{
+				TagLib.File file = TagLib.File.Create(MainWindow.GetNowPlaying());
+				TagLib.IPicture pic = file.Tag.Pictures[0];
+				System.IO.MemoryStream stream = new System.IO.MemoryStream(pic.Data.Data);
+				BitmapFrame bmp = BitmapFrame.Create(stream);
+				cover.Source = bmp;
 
-            string title = file.Tag.Title;
-            Title.Text = title;
-            string[] artist = file.Tag.AlbumArtists;
-            Artist.Text = "Artist \t" + artist[0].ToString();
-            string album = file.Tag.Album;
-            Album.Text = "Album \t" + album;
-            string[] genre = file.Tag.Genres;
-            Genre.Text = "Genre \t" + genre[0].ToString();
-            uint year = file.Tag.Year;
-            Year.Text = "Year \t" + year.ToString();
+				string title = file.Tag.Title;
+				Title.Text = title;
+				string[] artist = file.Tag.AlbumArtists;
+				Artist.Text = "Artist \t" + artist[0].ToString();
+				string album = file.Tag.Album;
+				Album.Text = "Album \t" + album;
+				string[] genre = file.Tag.Genres;
+				Genre.Text = "Genre \t" + genre[0].ToString();
+				uint year = file.Tag.Year;
+				Year.Text = "Year \t" + year.ToString();
+			}
         }
     }
 }

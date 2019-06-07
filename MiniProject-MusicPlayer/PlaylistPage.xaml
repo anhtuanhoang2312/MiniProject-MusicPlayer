@@ -12,6 +12,7 @@
         <ListView FontSize="15" Name="PlayListListViewPage" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListView.ContextMenu>
                 <ContextMenu>
+                    <MenuItem Header="Play" Click="PlayMenuItem_Click"/>
                     <MenuItem Header="Remove" Click="RemoveMenuItem_Click"/>
                 </ContextMenu>
             </ListView.ContextMenu>

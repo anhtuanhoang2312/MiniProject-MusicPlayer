@@ -112,13 +112,14 @@ namespace MiniProject_MusicPlayer
 		{
 			MainWindow._isPlaying = false;
 			MainWindow._timer.Stop();
+			MainWindow._audio.Close();
         }
 
         private void _audio_MediaOpened(object sender, EventArgs e)
 		{
 			MainWindow._audio.Play();
 			MainWindow._isPlaying = true;
-			MainWindow._timer.Start();	
+			MainWindow._timer.Start();
 		}
 
 		private void RemoveMenuItem_Click(object sender, RoutedEventArgs e)

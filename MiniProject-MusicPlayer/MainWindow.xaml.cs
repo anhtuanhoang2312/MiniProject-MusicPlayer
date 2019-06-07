@@ -27,6 +27,7 @@ namespace MiniProject_MusicPlayer
         public static DispatcherTimer _timer = new DispatcherTimer();
         public static BindingList<Info> _infoList = new BindingList<Info>();
         public static BindingList<Playlist> _playlistList = new BindingList<Playlist>();
+		public static List<Info> _currentlyPlayingPlayList = new List<Info>();
         public static string currentlyPlayingSong = null;
         public static bool _isDragging = false;
         public static bool _isPlaying = false;
@@ -173,12 +174,190 @@ namespace MiniProject_MusicPlayer
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
+			if(currentlyPlayingSong != null)
+			{
+				_audio.Stop();
+				_timer.Stop();
+				_audio.Close();
+				string previousSong = null;
 
+				if(_isShuffle == true)
+				{
+					Random rnd = new Random();
+
+					if (PlaylistPage.indexes.Count == 0)
+					{
+						PlaylistPage.refillIndexesList();
+					}
+
+					int position = rnd.Next(PlaylistPage.indexes.Count);
+
+					previousSong = PlaylistPage._Playlist[PlaylistPage.indexes[position]].FileName;
+
+					PlaylistPage.indexes.RemoveAt(position);
+				}
+				else if (_isShuffle == false)
+				{
+					for (int i = 0; i < _currentlyPlayingPlayList.Count; i++)
+					{
+						if (currentlyPlayingSong == _currentlyPlayingPlayList[i].FileName)
+						{
+							if (i == 0)
+							{
+								previousSong = _currentlyPlayingPlayList[_currentlyPlayingPlayList.Count - 1].FileName;
+							}
+							else
+							{
+								previousSong = _currentlyPlayingPlayList[i - 1].FileName;
+							}
+						}
+					}
+				}
+				SetNowPlaying(previousSong);
+				//MessageBox.Show(currentlyPlayingSong);
+				_audio.MediaOpened += _audio_MediaOpened;
+				_audio.MediaEnded += _audio_MediaEnded;
+			}
         }
 
-        private void NextButton_Click(object sender, RoutedEventArgs e)
-        {
+		private void _audio_MediaEnded(object sender, EventArgs e)
+		{
+			_isPlaying = false;
+			_timer.Stop();
+			Info nextSong = null;
 
+			if (_isRepeat == true && _isShuffle == true)
+			{
+				Random rnd = new Random();
+
+				if(PlaylistPage.indexes.Count == 0)
+				{
+					PlaylistPage.refillIndexesList();
+				}
+
+				int position = rnd.Next(PlaylistPage.indexes.Count);
+
+				nextSong = _currentlyPlayingPlayList[PlaylistPage.indexes[position]];
+
+				PlaylistPage.indexes.RemoveAt(position);
+			}
+			else if (_isRepeat == true && _isShuffle == false)
+			{
+				for (int i = 0; i < _currentlyPlayingPlayList.Count; i++)
+				{
+					if (currentlyPlayingSong == _currentlyPlayingPlayList[i].FileName)
+					{
+						if (i + 1 < _currentlyPlayingPlayList.Count)
+						{
+							nextSong = _currentlyPlayingPlayList[i + 1];
+						}
+						else if (i + 1 == _currentlyPlayingPlayList.Count)
+						{
+							nextSong = _currentlyPlayingPlayList[0];
+						}
+					}
+				}
+			}
+			else if (_isRepeat == false && _isShuffle == true)
+			{
+				Random rnd = new Random();
+
+				if (PlaylistPage.indexes.Count != 0)
+				{
+					int position = rnd.Next(PlaylistPage.indexes.Count);
+
+					nextSong = PlaylistPage._Playlist[PlaylistPage.indexes[position]];
+
+					PlaylistPage.indexes.RemoveAt(position);
+				}
+			}
+			else if (_isRepeat == false && _isShuffle == false)
+			{
+				for (int i = 0; i < _currentlyPlayingPlayList.Count; i++)
+				{
+					if (MainWindow.currentlyPlayingSong == _currentlyPlayingPlayList[i].FileName)
+					{
+						if (i + 1 < _currentlyPlayingPlayList.Count && PlaylistPage.startIndex != i + 1)
+						{
+							nextSong = _currentlyPlayingPlayList[i + 1];
+						}
+						else if (i + 1 == _currentlyPlayingPlayList.Count && PlaylistPage.startIndex != 0)
+						{
+							nextSong = _currentlyPlayingPlayList[0];
+						}
+					}
+				}
+			}
+
+			if (nextSong != null)
+			{
+				MainWindow._audio.Close();
+				MainWindow.SetNowPlaying(nextSong.FileName);
+			}
+		}
+
+		private void _audio_MediaOpened(object sender, EventArgs e)
+		{
+			_audio.Play();
+			_isPlaying = true;
+			_timer.Start();
+
+			foreach (var info in _currentlyPlayingPlayList)
+			{
+				if (info.FileName == MainWindow.currentlyPlayingSong)
+				{
+					PlaylistPage.indexes.Remove(_currentlyPlayingPlayList.IndexOf(info));
+				}
+			}
+		}
+
+		private void NextButton_Click(object sender, RoutedEventArgs e)
+        {
+			if (currentlyPlayingSong != null)
+			{
+				_audio.Stop();
+				_timer.Stop();
+				_audio.Close();
+				string nextSong = null;
+
+				if (_isShuffle == true)
+				{
+					Random rnd = new Random();
+
+					if (PlaylistPage.indexes.Count == 0)
+					{
+						PlaylistPage.refillIndexesList();
+					}
+
+					int position = rnd.Next(PlaylistPage.indexes.Count);
+
+					nextSong = PlaylistPage._Playlist[PlaylistPage.indexes[position]].FileName;
+
+					PlaylistPage.indexes.RemoveAt(position);
+
+				}
+				else if (_isShuffle == false)
+				{
+					for (int i = 0; i < _currentlyPlayingPlayList.Count(); i++)
+					{
+						if (currentlyPlayingSong == _currentlyPlayingPlayList[i].FileName)
+						{
+							if (i + 1 == _currentlyPlayingPlayList.Count())
+							{
+								nextSong = _currentlyPlayingPlayList[0].FileName;
+							}
+							else
+							{
+								nextSong = _currentlyPlayingPlayList[i + 1].FileName;
+							}
+						}
+					}
+				}
+				
+				SetNowPlaying(nextSong);
+				_audio.MediaOpened += _audio_MediaOpened;
+				_audio.MediaEnded += _audio_MediaEnded;
+			}
         }
 
         private void ShuffleButton_Click(object sender, RoutedEventArgs e)
