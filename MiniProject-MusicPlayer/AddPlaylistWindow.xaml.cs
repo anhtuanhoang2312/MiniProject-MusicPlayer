@@ -42,7 +42,7 @@ namespace MiniProject_MusicPlayer
         {
 			if (isExist(NameBox.Text))
 			{
-				MessageBox.Show("There is already a playlist with the same name");
+				MessageBox.Show("There is already a playlist with the same name!", "Name Duplicated");
 			}
 			else
 			{

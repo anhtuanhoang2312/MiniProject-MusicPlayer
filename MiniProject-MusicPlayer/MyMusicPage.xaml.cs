@@ -66,7 +66,7 @@ namespace MiniProject_MusicPlayer
                     {
                         BitmapImage bi = new BitmapImage();
                         bi.BeginInit();
-                        bi.UriSource = new Uri("/Icon/MusicNote.png", UriKind.Relative);
+                        bi.UriSource = new Uri("/Icon/disc.png", UriKind.Relative);
                         bi.EndInit();
                         Cover = bi;
                     }

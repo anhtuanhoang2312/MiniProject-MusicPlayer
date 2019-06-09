@@ -22,11 +22,12 @@
         </Grid.RowDefinitions>
 
         <Viewbox Grid.Column="1" Grid.Row="1">
-            <Image Name="cover" Width="400" Height="400">
-                <Image.Effect>
+            <Grid Background="{Binding Path=(fw:AccentColors.ImmersiveSystemAccentBrush)}">
+                <Grid.Effect>
                     <DropShadowEffect Direction="220" Color="#FFB6C2CB" ShadowDepth="10" BlurRadius="15" />
-                </Image.Effect>
-            </Image>
+                </Grid.Effect>
+                <Image Name="cover" Width="400" Height="400"/>
+            </Grid>
         </Viewbox>
 
         <WrapPanel Margin="10" Grid.Column="2" Grid.Row="1" Orientation="Vertical">

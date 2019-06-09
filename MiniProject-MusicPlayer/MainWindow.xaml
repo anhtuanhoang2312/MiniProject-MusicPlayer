@@ -135,6 +135,12 @@
                 <Grid Grid.Row="1">
                     <ListView Name="PlaylistListView" FontSize="15" BorderThickness="0" Background="{x:Null}" BorderBrush="{x:Null}"                             
                         ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ItemsSource="{Binding}">
+                        <ListView.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Save" Click="SaveMenuItem_Click"/>
+                                <MenuItem Header="Remove" Click="RemoveMenuItem_Click"/>
+                            </ContextMenu>
+                        </ListView.ContextMenu>
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListViewItem_PreviewMouseLeftButtonDown" />
