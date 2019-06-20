@@ -188,6 +188,7 @@
                 <ColumnDefinition Width="60" />
                 <ColumnDefinition Width="60" />
                 <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="60" />
             </Grid.ColumnDefinitions>
 
             <TextBlock Name="Current" Grid.Column="1" FontSize="15" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -227,15 +228,23 @@
                 <Image Source="/Icon/next.png" Width="40" Height="40"/>
             </Button>
 
-            <Button Grid.Column="7" Name="shuffleButton"
+            <Button Grid.Column="7" Name="stopButton"
+                    Width="60" Height="60" Click="StopButton_Click"
+                    BorderThickness="0" 
+                    Background="Transparent"
+                    Style="{StaticResource ButtonRevealStyle}">
+                <Image Source="/Icon/stop.png" Width="40" Height="40"/>
+            </Button>
+
+            <Button Grid.Column="8" Name="shuffleButton"
                     Width="60" Height="60" Click="ShuffleButton_Click"
                     BorderThickness="0" 
                     Background="Transparent"
                     Style="{StaticResource ButtonRevealStyle}">
                 <Image Source="/Icon/shuffle.png" Width="40" Height="40"/>
             </Button>
-
-            <Button Grid.Column="8" Name="repeatButton"
+            
+            <Button Grid.Column="9" Name="repeatButton"
                     Width="60" Height="60" Click="RepeatButton_Click"
                     BorderThickness="0" 
                     Background="Transparent"

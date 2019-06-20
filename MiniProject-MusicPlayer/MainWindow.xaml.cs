@@ -620,5 +620,10 @@ namespace MiniProject_MusicPlayer
             MainWindow._playlistList.Remove(items[0]);
             Control.Show(MainContent, mymusicpg);
         }
+
+        private void StopButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
