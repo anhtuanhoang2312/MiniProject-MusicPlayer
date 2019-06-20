@@ -16,6 +16,8 @@ using System.Windows.Threading;
 using System.ComponentModel;
 using MiniProject_MusicPlayer.Class;
 using System.IO;
+using Gma.System.MouseKeyHook;
+
 
 namespace MiniProject_MusicPlayer
 {
@@ -39,9 +41,20 @@ namespace MiniProject_MusicPlayer
         public static PlaylistPage playlistpg = null;
         public static Check _check = new Check();
 
+
+		//NEW----------------------------------------------------------------------------------------------------------
+		public static bool _isHavingAPlayListRunning = false;
+		//NEW----------------------------------------------------------------------------------------------------------
+
+
 		public static BindingList<Info> _tempPlaylist = new BindingList<Info>();
 
-        public MainWindow()
+
+		//NEW----------------------------------------------------------------------------------------------------------
+		private IKeyboardMouseEvents _hook;
+		//NEW----------------------------------------------------------------------------------------------------------
+
+		public MainWindow()
         {
             InitializeComponent();
 
@@ -52,13 +65,146 @@ namespace MiniProject_MusicPlayer
             _timer.Interval = TimeSpan.FromSeconds(0);
             _timer.Tick += timer_Tick;
 
-            Slider.ApplyTemplate();
+			//NEW----------------------------------------------------------------------------------------------------------
+			_hook = Hook.GlobalEvents();
+			_hook.KeyUp += _hook_KeyUp;
+			//NEW----------------------------------------------------------------------------------------------------------
+
+			Slider.ApplyTemplate();
             System.Windows.Controls.Primitives.Thumb thumb = (Slider.Template.FindName("PART_Track", Slider) as System.Windows.Controls.Primitives.Track).Thumb;
             thumb.MouseEnter += new MouseEventHandler(thumb_MouseEnter);
         }
 
-        //property changed
-        private void Check_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		//NEW--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		private void _hook_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+		{
+			if(e.KeyCode == System.Windows.Forms.Keys.Space && _isPlaying == true)
+			{
+				Image img = new Image();
+				string path = string.Format("/Icon/play.png");
+				img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+				img.Height = 40;
+				img.Width = 40;
+
+				playButton.Content = img;
+
+				_isPlaying = false;
+				_audio.Pause();
+				_timer.Stop();
+			}
+			else if(e.KeyCode == System.Windows.Forms.Keys.Space && _isPlaying == false)
+			{
+				Image img = new Image();
+				string path = string.Format("/Icon/pause.png");
+				img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+				img.Height = 40;
+				img.Width = 40;
+
+				playButton.Content = img;
+
+				_isPlaying = true;
+				_audio.Play();
+				_timer.Start();
+			}
+			else if(e.Control && e.KeyCode == System.Windows.Forms.Keys.Right)
+			{
+				if (currentlyPlayingSong != null && _isHavingAPlayListRunning == true)
+				{
+					_audio.Stop();
+					_timer.Stop();
+					_audio.Close();
+					string nextSong = null;
+
+					if (_isShuffle == true)
+					{
+						Random rnd = new Random();
+
+						if (PlaylistPage.indexes.Count == 0)
+						{
+							PlaylistPage.refillIndexesList();
+						}
+
+						int position = rnd.Next(PlaylistPage.indexes.Count);
+
+						nextSong = PlaylistPage._Playlist[PlaylistPage.indexes[position]].FileName;
+
+						PlaylistPage.indexes.RemoveAt(position);
+					}
+					else if (_isShuffle == false)
+					{
+						for (int i = 0; i < _currentlyPlayingPlayList.Count(); i++)
+						{
+							if (currentlyPlayingSong == _currentlyPlayingPlayList[i].FileName)
+							{
+								if (i + 1 == _currentlyPlayingPlayList.Count())
+								{
+									nextSong = _currentlyPlayingPlayList[0].FileName;
+								}
+								else
+								{
+									nextSong = _currentlyPlayingPlayList[i + 1].FileName;
+								}
+							}
+						}
+					}
+
+					SetNowPlaying(nextSong);
+					_audio.MediaOpened += _audio_MediaOpened;
+					_audio.MediaEnded += _audio_MediaEnded;
+				}
+			}
+			else if(e.Control && e.KeyCode == System.Windows.Forms.Keys.Left)
+			{
+				if (currentlyPlayingSong != null && _isHavingAPlayListRunning == true)
+				{
+					_audio.Stop();
+					_timer.Stop();
+					_audio.Close();
+					string previousSong = null;
+
+					if (_isShuffle == true)
+					{
+						Random rnd = new Random();
+
+						if (PlaylistPage.indexes.Count == 0)
+						{
+							PlaylistPage.refillIndexesList();
+						}
+
+						int position = rnd.Next(PlaylistPage.indexes.Count);
+
+						previousSong = PlaylistPage._Playlist[PlaylistPage.indexes[position]].FileName;
+
+						PlaylistPage.indexes.RemoveAt(position);
+					}
+					else if (_isShuffle == false)
+					{
+						for (int i = 0; i < _currentlyPlayingPlayList.Count; i++)
+						{
+							if (currentlyPlayingSong == _currentlyPlayingPlayList[i].FileName)
+							{
+								if (i == 0)
+								{
+									previousSong = _currentlyPlayingPlayList[_currentlyPlayingPlayList.Count - 1].FileName;
+								}
+								else
+								{
+									previousSong = _currentlyPlayingPlayList[i - 1].FileName;
+								}
+							}
+						}
+					}
+					SetNowPlaying(previousSong);
+					_audio.MediaOpened += _audio_MediaOpened;
+					_audio.MediaEnded += _audio_MediaEnded;
+				}
+			}
+		}
+		//NEW--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+		//property changed
+		private void Check_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             PlaylistListView.DataContext = _playlistList;
         }
@@ -325,35 +471,38 @@ namespace MiniProject_MusicPlayer
         //button
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!_isPlaying)
-            {
-                Image img = new Image();
-                string path = string.Format("/Icon/pause.png");
-                img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
-                img.Height = 40;
-                img.Width = 40;
+			if(currentlyPlayingSong != null)
+			{
+				if (!_isPlaying)
+				{
+					Image img = new Image();
+					string path = string.Format("/Icon/pause.png");
+					img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+					img.Height = 40;
+					img.Width = 40;
 
-                playButton.Content = img;
+					playButton.Content = img;
 
-                _audio.Play();
-                _isPlaying = true;
-                _timer.Start();
-            }
-            else
-            {
-                Image img = new Image();
-                string path = string.Format("/Icon/play.png");
-                img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
-                img.Height = 40;
-                img.Width = 40;
+					_audio.Play();
+					_isPlaying = true;
+					_timer.Start();
+				}
+				else
+				{
+					Image img = new Image();
+					string path = string.Format("/Icon/play.png");
+					img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+					img.Height = 40;
+					img.Width = 40;
 
-                playButton.Content = img;
+					playButton.Content = img;
 
-                _audio.Pause();
-                _isPlaying = false;
-                _timer.Stop();
-            }
-        }
+					_audio.Pause();
+					_isPlaying = false;
+					_timer.Stop();
+				}
+			}
+		}
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
@@ -623,7 +772,30 @@ namespace MiniProject_MusicPlayer
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
+			if(_isPlaying)
+			{
+				Image img = new Image();
+				string path = string.Format("/Icon/play.png");
+				img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+				img.Height = 40;
+				img.Width = 40;
 
+				playButton.Content = img;
+
+				_isPlaying = false;
+				_timer.Stop();
+				_audio.Close();
+				currentlyPlayingSong = null;
+				Slider.Value = 0;
+				Current.Text = "00:00";
+				Total.Text = "00:00";
+			}
         }
-    }
+
+		private void AcrylicWindow_Closed(object sender, EventArgs e)
+		{
+			_hook.KeyUp -= _hook_KeyUp;
+			_hook.Dispose();
+		}
+	}
 }

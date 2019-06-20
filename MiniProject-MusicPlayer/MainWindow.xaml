@@ -9,7 +9,7 @@
         fw:AcrylicWindow.Enabled="True" 
         MouseLeftButtonDown="Window_MouseDown"
         FontSize="15" WindowStyle="None" Opacity="50" AllowsTransparency="True" ResizeMode="CanResize" WindowStartupLocation="CenterScreen"
-        Title="Mini Music Player" AcrylicWindowStyle="None" Height="600" Width="900" RenderOptions.BitmapScalingMode="HighQuality">
+        Title="Mini Music Player" AcrylicWindowStyle="None" Height="600" Width="900" RenderOptions.BitmapScalingMode="HighQuality" Closed="AcrylicWindow_Closed">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

@@ -99,6 +99,13 @@ namespace MiniProject_MusicPlayer
 			//MainWindow.SetNowPlaying(nextSong.FileName);
 			//}
 
+
+
+			//NEW----------------------------------------------------------------------------------------------------------
+			MainWindow._isHavingAPlayListRunning = false;
+			//NEW----------------------------------------------------------------------------------------------------------
+
+
 			MainWindow._isPlaying = false;
 			MainWindow._timer.Stop();
 			Info nextSong = null;
@@ -175,6 +182,12 @@ namespace MiniProject_MusicPlayer
 
 		public void _audio_MediaOpened(object sender, EventArgs e)
 		{
+
+			//NEW----------------------------------------------------------------------------------------------------------
+			MainWindow._isHavingAPlayListRunning = true;
+			//NEW----------------------------------------------------------------------------------------------------------
+
+
 			MainWindow._audio.Play();
 			MainWindow._isPlaying = true;
 			MainWindow._timer.Start();
