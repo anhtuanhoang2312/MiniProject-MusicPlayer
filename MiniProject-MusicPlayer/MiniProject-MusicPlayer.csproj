@@ -152,9 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icon\about.png" />
-    <Resource Include="Icon\add.png" />
     <Resource Include="Icon\back.png" />
-    <Resource Include="Icon\browse.png" />
     <Resource Include="Icon\next.png" />
     <Resource Include="Icon\pause.png" />
     <Resource Include="Icon\play.png" />
@@ -172,6 +170,7 @@
     <Resource Include="Icon\disc.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Icon\add.png" />
     <Resource Include="Icon\stop.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

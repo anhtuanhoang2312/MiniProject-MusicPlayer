@@ -86,7 +86,7 @@
                             <Grid>
                                 <Button BorderThickness="0" HorizontalContentAlignment="Left" Background="Transparent">
                                     <StackPanel Orientation="Horizontal" Background="Transparent">
-                                        <Image Source="/Icon/browse.png" Width="40" Height="40"/>
+                                        <Image Source="/Icon/playlist.png" Width="40" Height="40"/>
                                         <TextBlock Background="Transparent" Text="My music" VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </Button>
@@ -100,14 +100,6 @@
                                 </StackPanel>
                             </Button>
                         </ListViewItem>
-                        <ListViewItem Name="RecentPlays" Padding="1" >
-                            <Button BorderThickness="0" HorizontalContentAlignment="Left" Background="Transparent">
-                                <StackPanel Orientation="Horizontal" Background="Transparent">
-                                    <Image Source="/Icon/playlist.png" Width="40" Height="40"/>
-                                    <TextBlock Background="Transparent" Text="Recent plays" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Button>
-                        </ListViewItem>
                     </ListView>
 
                     <Grid>
@@ -117,18 +109,14 @@
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Text="Playlists" Margin="12" FontWeight="DemiBold"/>
-                        <Button Grid.Column="1" Name="addButton" Width="40" Height="40" BorderThickness="0" Background="Transparent" Style="{StaticResource ButtonRevealStyle}">
-                            <Menu Style="{StaticResource AcrylicMenuStyle}" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                <MenuItem>
-                                    <MenuItem.Header>
-                                        <Image Source="/Icon/add.png" Width="35" Height="35" Margin="-5.5,0,-5,0"/>
-                                    </MenuItem.Header>
-                                    <MenuItem Header="New" Click="New_Click"/>
-                                    <MenuItem Header="Import" Click="Import_Click"/>
-                                </MenuItem>
-                            </Menu>
+                        <Button Grid.Column="1" Name="addButton" Width="40" Height="40" BorderThickness="0" Background="Transparent" Style="{StaticResource ButtonRevealStyle}" Click="New_Click">
+                            <Image Source="/Icon/add.png" Width="40" Height="40"/>
+                            <Button.ToolTip>
+                                <ToolTip>
+                                    Create a playlist
+                                </ToolTip>
+                            </Button.ToolTip>
                         </Button>
-
                     </Grid>
                 </StackPanel>
 
@@ -137,7 +125,7 @@
                         ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ItemsSource="{Binding}">
                         <ListView.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Save" Click="SaveMenuItem_Click"/>
+                                <MenuItem Header="Show" Click="ShowMenuItem_Click"/>
                                 <MenuItem Header="Remove" Click="RemoveMenuItem_Click"/>
                             </ContextMenu>
                         </ListView.ContextMenu>
@@ -145,6 +133,8 @@
                             <Style TargetType="ListViewItem">
                                 <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListViewItem_PreviewMouseLeftButtonDown" />
                                 <EventSetter Event="PreviewMouseLeftButtonUp" Handler="ListViewItem_PreviewMouseLeftButtonUp" />
+                                <EventSetter Event="PreviewMouseRightButtonDown" Handler="ListViewItem_PreviewMouseRightButtonDown" />
+                                <EventSetter Event="PreviewMouseRightButtonUp" Handler="ListViewItem_PreviewMouseRightButtonUp" />
                                 <Setter Property="Background" Value="Transparent" />
                                 <Setter Property="Template">
                                     <Setter.Value>

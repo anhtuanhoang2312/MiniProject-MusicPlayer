@@ -40,23 +40,17 @@ namespace MiniProject_MusicPlayer
         public static MyMusicPage mymusicpg = new MyMusicPage();
         public static PlaylistPage playlistpg = null;
         public static Check _check = new Check();
-
-
-		//NEW----------------------------------------------------------------------------------------------------------
-		public static bool _isHavingAPlayListRunning = false;
-		//NEW----------------------------------------------------------------------------------------------------------
-
-
+        public static int _upIndex = -1;
+        public static bool _isHavingAPlayListRunning = false;
 		public static BindingList<Info> _tempPlaylist = new BindingList<Info>();
-
-
-		//NEW----------------------------------------------------------------------------------------------------------
 		private IKeyboardMouseEvents _hook;
-		//NEW----------------------------------------------------------------------------------------------------------
 
 		public MainWindow()
         {
             InitializeComponent();
+
+            _hook = Hook.GlobalEvents();
+            _hook.KeyUp += _hook_KeyUp;
 
             Control.Show(MainContent, mymusicpg);
 
@@ -65,18 +59,15 @@ namespace MiniProject_MusicPlayer
             _timer.Interval = TimeSpan.FromSeconds(0);
             _timer.Tick += timer_Tick;
 
-			//NEW----------------------------------------------------------------------------------------------------------
-			_hook = Hook.GlobalEvents();
-			_hook.KeyUp += _hook_KeyUp;
-			//NEW----------------------------------------------------------------------------------------------------------
-
 			Slider.ApplyTemplate();
             System.Windows.Controls.Primitives.Thumb thumb = (Slider.Template.FindName("PART_Track", Slider) as System.Windows.Controls.Primitives.Track).Thumb;
             thumb.MouseEnter += new MouseEventHandler(thumb_MouseEnter);
+
+            Load();
         }
 
-		//NEW--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-		private void _hook_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+        //Hook
+        private void _hook_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
 		{
 			if(e.KeyCode == System.Windows.Forms.Keys.Space && _isPlaying == true)
 			{
@@ -200,8 +191,6 @@ namespace MiniProject_MusicPlayer
 				}
 			}
 		}
-		//NEW--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 
 		//property changed
 		private void Check_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -346,10 +335,6 @@ namespace MiniProject_MusicPlayer
                 {
                     Control.Show(MainContent, new NowPlayingPage());
                 }
-                else if (item.Name == "NowPlaying")
-                {
-                    Control.Show(MainContent, new NowPlayingPage());
-                }
                 else
                 {
                     int index = PlaylistListView.SelectedIndex;
@@ -357,12 +342,46 @@ namespace MiniProject_MusicPlayer
                     if (index != -1)
                     {
                         Playlist items = item.Content as Playlist;
+                        string name = item.Name;
+
                         if (items != null)
                         {
                             _tempPlaylist = items._song;
                             playlistpg = new PlaylistPage(_tempPlaylist);
                             Control.Show(MainContent, playlistpg);
                         }
+                    }
+                }
+            }
+        }
+
+        private void ListViewItem_PreviewMouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            MyListView.SelectedItems.Clear();
+            PlaylistListView.SelectedItems.Clear();
+
+            ListViewItem item = sender as ListViewItem;
+            if (item != null)
+            {
+                item.IsSelected = true;
+                MyListView.SelectedItem = item;
+                PlaylistListView.SelectedItem = item;
+            }
+        }
+
+        private void ListViewItem_PreviewMouseRightButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ListViewItem item = sender as ListViewItem;
+
+            if (item != null && item.IsSelected)
+            {
+                if (item.Name != "MyMusic" && item.Name != "NowPlaying")
+                {
+                    int index = PlaylistListView.SelectedIndex;
+
+                    if (index != -1)
+                    {
+                        _upIndex = index;
                     }
                 }
             }
@@ -466,6 +485,13 @@ namespace MiniProject_MusicPlayer
                     PlaylistPage.indexes.Remove(_currentlyPlayingPlayList.IndexOf(info));
                 }
             }
+        }
+
+        private void AcrylicWindow_Closed(object sender, EventArgs e)
+        {
+            _hook.KeyUp -= _hook_KeyUp;
+            _hook.Dispose();
+            Save();
         }
 
         //button
@@ -655,6 +681,28 @@ namespace MiniProject_MusicPlayer
             }
         }
 
+        private void StopButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_isPlaying)
+            {
+                Image img = new Image();
+                string path = string.Format("/Icon/play.png");
+                img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+                img.Height = 40;
+                img.Width = 40;
+
+                playButton.Content = img;
+
+                _isPlaying = false;
+                _timer.Stop();
+                _audio.Close();
+                currentlyPlayingSong = null;
+                Slider.Value = 0;
+                Current.Text = "00:00";
+                Total.Text = "00:00";
+            }
+        }
+
         public void New_Click(object sender, RoutedEventArgs e)
         {
             var newplaylist = new AddPlaylistWindow();
@@ -665,100 +713,15 @@ namespace MiniProject_MusicPlayer
                 _playlistList.Add(newPlaylist);
                 PlaylistListView.DataContext = _playlistList;
             }
-        }
+        }       
 
-        private void Import_Click(object sender, RoutedEventArgs e)
-        {
-            var screen = new Microsoft.Win32.OpenFileDialog();
-            screen.Filter = "Data File|*.dat";
-            screen.Multiselect = true;
-
-            if (screen.ShowDialog() == true)
-            {
-                var filenames = screen.FileNames;
-
-                foreach (var filename in filenames)
-                {
-                    var reader = new StreamReader(filename);
-
-                    string name = System.IO.Path.GetFileNameWithoutExtension(filename);
-                    BindingList<Info> list = new BindingList<Info>();
-
-                    string line = "";
-                    List<string> temp = new List<string>();
-                    while ((line = reader.ReadLine()) != null)
-                    {
-                        temp.Add(line);
-
-                        ImageSource Cover = null;
-                        string Title = null;
-                        string Artist = null;
-                        string Album = null;
-
-                        foreach (var item in temp)
-                        {
-                            TagLib.File file = TagLib.File.Create(item);
-
-                            if (file.Tag.Pictures.Length >= 1)
-                            {
-                                TagLib.IPicture pic = file.Tag.Pictures[0];
-                                System.IO.MemoryStream stream = new System.IO.MemoryStream(pic.Data.Data);
-                                BitmapFrame bmp = BitmapFrame.Create(stream);
-                                Cover = bmp;
-                            }
-                            else
-                            {
-                                BitmapImage bi = new BitmapImage();
-                                bi.BeginInit();
-                                bi.UriSource = new Uri("/Icon/disc.png", UriKind.Relative);
-                                bi.EndInit();
-                                Cover = bi;
-                            }
-
-                            Title = file.Tag.Title;
-
-                            if (file.Tag.AlbumArtists.Length >= 1)
-                            {
-                                Artist = file.Tag.AlbumArtists[0].ToString();
-                            }
-                            else
-                            {
-                                Artist = "Unknown";
-                            }
-
-                            Album = file.Tag.Album;
-
-                            list.Add(new Info(Cover, Title, Artist, Album, item));
-                        }
-                    }
-
-                    reader.Close();
-
-                    Playlist newPlaylist = new Playlist(name, list);
-                    MainWindow._playlistList.Add(newPlaylist);
-                    MainWindow._check.ChangePlaylist = true;
-                }
-            }               
-        }
-
-        private void SaveMenuItem_Click(object sender, RoutedEventArgs e)
+        private void ShowMenuItem_Click(object sender, RoutedEventArgs e)
         {
             var item = sender as MenuItem;
             BindingList<Playlist> items = item.DataContext as BindingList<Playlist>;
-
-            if (items != null)
-            {
-                var writer = new StreamWriter(items[0].Name + ".dat");
-
-                foreach (var song in items[0].Song)
-                {
-                    writer.WriteLine(song.FileName);
-                }
-
-                writer.Close();
-
-                MessageBox.Show("Playlist saved successfully.", "Playlist Saved");
-            }
+            _tempPlaylist = items[_upIndex].Song;
+            playlistpg = new PlaylistPage(_tempPlaylist);
+            Control.Show(MainContent, playlistpg);
         }
 
         private void RemoveMenuItem_Click(object sender, RoutedEventArgs e)
@@ -766,36 +729,134 @@ namespace MiniProject_MusicPlayer
             var item = sender as MenuItem;
             BindingList<Playlist> items = item.DataContext as BindingList<Playlist>;
 
-            MainWindow._playlistList.Remove(items[0]);
+            MainWindow._playlistList.Remove(items[_upIndex]);
             Control.Show(MainContent, mymusicpg);
         }
 
-        private void StopButton_Click(object sender, RoutedEventArgs e)
+        private void Save()
         {
-			if(_isPlaying)
-			{
-				Image img = new Image();
-				string path = string.Format("/Icon/play.png");
-				img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
-				img.Height = 40;
-				img.Width = 40;
+            if (_playlistList.Count != 0)
+            {
+                var writer = new StreamWriter("data.dat");
 
-				playButton.Content = img;
+                foreach (var items in _playlistList)
+                {
+                    items.Save();
+                    writer.WriteLine(items.Name);
+                }
 
-				_isPlaying = false;
-				_timer.Stop();
-				_audio.Close();
-				currentlyPlayingSong = null;
-				Slider.Value = 0;
-				Current.Text = "00:00";
-				Total.Text = "00:00";
-			}
+                writer.Close();
+            }
+
+            if (_infoList.Count != 0)
+            {
+                var writer = new StreamWriter("library.dat");
+
+                foreach (var items in _infoList)
+                {
+                    writer.WriteLine(items.FileName);
+                }
+
+                writer.Close();
+            }
         }
 
-		private void AcrylicWindow_Closed(object sender, EventArgs e)
-		{
-			_hook.KeyUp -= _hook_KeyUp;
-			_hook.Dispose();
-		}
-	}
+        private void Load()
+        {
+            System.Windows.Forms.DialogResult dlr = System.Windows.Forms.MessageBox.Show("Do you want to load previous data?", "Confirmation", System.Windows.Forms.MessageBoxButtons.YesNo);
+
+            if (dlr == System.Windows.Forms.DialogResult.Yes)
+            {
+                if (File.Exists("data.dat"))
+                {
+                    try
+                    {
+                        if (File.Exists("lastplayed.dat"))
+                        {
+                            string song = "";
+
+                            var read = new StreamReader("lastplayed.dat");
+
+                            while ((song = read.ReadLine()) != null)
+                            {
+                                SetNowPlaying(song);
+                                Control.Show(MainContent, new NowPlayingPage());
+                            }
+
+                            read.Close();
+                        }
+
+                        string name = "";
+
+                        var reader = new StreamReader("data.dat");
+
+                        while ((name = reader.ReadLine()) != null)
+                        {
+                            var readerlist = new StreamReader(name + ".dat"); //System.IO.Path.GetFileNameWithoutExtension(name)
+
+                            BindingList<Info> list = new BindingList<Info>();
+
+                            string line = "";
+
+                            while ((line = readerlist.ReadLine()) != null)
+                            {
+                                ImageSource Cover = null;
+                                string Title = null;
+                                string Artist = null;
+                                string Album = null;
+
+                                TagLib.File file = TagLib.File.Create(line);
+
+                                if (file.Tag.Pictures.Length >= 1)
+                                {
+                                    TagLib.IPicture pic = file.Tag.Pictures[0];
+                                    System.IO.MemoryStream stream = new System.IO.MemoryStream(pic.Data.Data);
+                                    BitmapFrame bmp = BitmapFrame.Create(stream);
+                                    Cover = bmp;
+                                }
+                                else
+                                {
+                                    BitmapImage bi = new BitmapImage();
+                                    bi.BeginInit();
+                                    bi.UriSource = new Uri("/Icon/disc.png", UriKind.Relative);
+                                    bi.EndInit();
+                                    Cover = bi;
+                                }
+
+                                Title = file.Tag.Title;
+
+                                if (file.Tag.AlbumArtists.Length >= 1)
+                                {
+                                    Artist = file.Tag.AlbumArtists[0].ToString();
+                                }
+                                else
+                                {
+                                    Artist = "Unknown";
+                                }
+
+                                Album = file.Tag.Album;
+
+                                list.Add(new Info(Cover, Title, Artist, Album, line));
+                            }
+
+                            readerlist.Close();
+
+                            Playlist newPlaylist = new Playlist(name, list);
+                            _playlistList.Add(newPlaylist);
+                            _check.ChangePlaylist = true;
+                        }
+                        reader.Close();
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        MessageBox.Show("Something happen while loading your data!", "Error");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("You haven't saved any playlists yet! There's nothing to load.", "Music Player");
+                }
+            }
+        }
+    }
 }

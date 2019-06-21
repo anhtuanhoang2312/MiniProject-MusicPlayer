@@ -30,10 +30,8 @@ namespace MiniProject_MusicPlayer
             InitializeComponent();
 
 			_Playlist = temp;
-			
             this.DataContext = this;
-
-			PlayListListViewPage.ItemsSource = _Playlist;
+            PlayListListViewPage.ItemsSource = _Playlist;
 		}
 
 		private void RemoveMenuItem_Click(object sender, RoutedEventArgs e)
@@ -81,32 +79,8 @@ namespace MiniProject_MusicPlayer
 		}
 
 		public void _audio_MediaEnded(object sender, EventArgs e)
-		{
-			//Info nextSong = null;
-
-			//for(int i = 0; i < _Playlist.Count; i++)
-			//{
-			//if(MainWindow.currentlyPlayingSong == _Playlist[i].FileName)
-			//{
-			//if(i + 1 < _Playlist.Count)
-			//{
-			//nextSong = _Playlist[i + 1];
-			//}
-			//}
-			//}
-
-			//if(nextSong != null)
-			//{
-			//MainWindow.SetNowPlaying(nextSong.FileName);
-			//}
-
-
-
-			//NEW----------------------------------------------------------------------------------------------------------
+		{			
 			MainWindow._isHavingAPlayListRunning = false;
-			//NEW----------------------------------------------------------------------------------------------------------
-
-
 			MainWindow._isPlaying = false;
 			MainWindow._timer.Stop();
 			Info nextSong = null;
@@ -183,12 +157,7 @@ namespace MiniProject_MusicPlayer
 
 		public void _audio_MediaOpened(object sender, EventArgs e)
 		{
-
-			//NEW----------------------------------------------------------------------------------------------------------
 			MainWindow._isHavingAPlayListRunning = true;
-			//NEW----------------------------------------------------------------------------------------------------------
-
-
 			MainWindow._audio.Play();
 			MainWindow._isPlaying = true;
 			MainWindow._timer.Start();

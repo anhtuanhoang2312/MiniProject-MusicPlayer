@@ -18,9 +18,9 @@
             </ListView.ContextMenu>
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="TITLE" Width="{Binding ElementName=Field1, Path=ActualWidth}" DisplayMemberBinding="{Binding Title}" />
-                    <GridViewColumn Header="ARTIST" Width="{Binding ElementName=Field2, Path=ActualWidth}" DisplayMemberBinding="{Binding Artist}" />
-                    <GridViewColumn Header="ALBUM" Width="{Binding ElementName=Field3, Path=ActualWidth}" DisplayMemberBinding="{Binding Album}" />
+                    <GridViewColumn Header="Title" Width="{Binding ElementName=Field1, Path=ActualWidth}" DisplayMemberBinding="{Binding Title}" />
+                    <GridViewColumn Header="Artist" Width="{Binding ElementName=Field2, Path=ActualWidth}" DisplayMemberBinding="{Binding Artist}" />
+                    <GridViewColumn Header="Album" Width="{Binding ElementName=Field3, Path=ActualWidth}" DisplayMemberBinding="{Binding Album}" />
                 </GridView>
             </ListView.View>
             <ListView.ItemContainerStyle>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,6 +41,18 @@ namespace MiniProject_MusicPlayer
         {
             this._name = Name;
             this._song = Song;
+        }
+
+        public void Save()
+        {
+            var writer = new StreamWriter(Name + ".dat");
+
+            foreach (var song in Song)
+            {
+                writer.WriteLine(song.FileName);
+            }
+
+            writer.Close();
         }
     }
 }

@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.ComponentModel;
+using System.IO;
 
 namespace MiniProject_MusicPlayer
 {
@@ -22,14 +23,70 @@ namespace MiniProject_MusicPlayer
     public partial class MyMusicPage : UserControl
     {
 		public static string selectedPlayListName = null;
-		public static BindingList<Info> tempPlaylist = MainWindow._tempPlaylist;
 
         public MyMusicPage()
         {
             InitializeComponent();
-            if (BrowseListView.ItemsSource == null)
+
+            if (File.Exists("library.dat"))
+            {
+                string song = "";
+                ImageSource Cover = null;
+                string Title = null;
+                string Artist = null;
+                string Album = null;
+
+                var read = new StreamReader("library.dat");
+
+                while ((song = read.ReadLine()) != null)
+                {
+                    TagLib.File file = TagLib.File.Create(song);
+
+                    if (file.Tag.Pictures.Length >= 1)
+                    {
+                        TagLib.IPicture pic = file.Tag.Pictures[0];
+                        System.IO.MemoryStream stream = new System.IO.MemoryStream(pic.Data.Data);
+                        BitmapFrame bmp = BitmapFrame.Create(stream);
+                        Cover = bmp;
+                    }
+                    else
+                    {
+                        BitmapImage bi = new BitmapImage();
+                        bi.BeginInit();
+                        bi.UriSource = new Uri("/Icon/disc.png", UriKind.Relative);
+                        bi.EndInit();
+                        Cover = bi;
+                    }
+
+                    Title = file.Tag.Title;
+
+                    if (file.Tag.AlbumArtists.Length >= 1)
+                    {
+                        Artist = file.Tag.AlbumArtists[0].ToString();
+                    }
+                    else
+                    {
+                        Artist = "Unknown";
+                    }
+
+                    Album = file.Tag.Album;
+
+                    MainWindow._infoList.Add(new Info(Cover, Title, Artist, Album, song));
+                }
+
+                read.Close();
+
+                BrowseListView.ItemsSource = MainWindow._infoList;
+            }
+
+            if (MainWindow._infoList.Count == 0)
             {
                 browseButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                browseButton.Visibility = Visibility.Hidden;
+                BrowseListView.Visibility = Visibility.Visible;
             }
         }
 

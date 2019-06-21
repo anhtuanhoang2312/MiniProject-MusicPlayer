@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -90,6 +91,10 @@ namespace MiniProject_MusicPlayer
 
         private void Check_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            var writer = new StreamWriter("lastplayed.dat");
+            writer.WriteLine(MainWindow.GetNowPlaying());
+            writer.Close();
+
             TagLib.File file = TagLib.File.Create(MainWindow.GetNowPlaying());
             if (file.Tag.Pictures.Length >= 1)
             {
