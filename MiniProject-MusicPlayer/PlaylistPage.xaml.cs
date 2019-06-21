@@ -38,10 +38,11 @@ namespace MiniProject_MusicPlayer
 
 		private void RemoveMenuItem_Click(object sender, RoutedEventArgs e)
 		{
-			if(PlayListListViewPage.SelectedItem != null)
+			if (PlayListListViewPage.SelectedItem != null)
 			{
 				_Playlist.RemoveAt(PlayListListViewPage.SelectedIndex);
 			}
+			
 		}
 
 		public static void refillIndexesList()

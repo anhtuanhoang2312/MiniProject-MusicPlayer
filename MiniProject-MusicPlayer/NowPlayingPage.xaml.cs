@@ -82,6 +82,10 @@ namespace MiniProject_MusicPlayer
                     Year.Text = "Year \t" + "Unknown";
                 }
             }
+			else
+			{
+				Grid.Visibility = Visibility.Hidden;
+			}
         }
 
         private void Check_PropertyChanged(object sender, PropertyChangedEventArgs e)

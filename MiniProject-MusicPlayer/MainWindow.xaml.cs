@@ -92,7 +92,7 @@ namespace MiniProject_MusicPlayer
 				_audio.Pause();
 				_timer.Stop();
 			}
-			else if(e.KeyCode == System.Windows.Forms.Keys.Space && _isPlaying == false)
+			else if(e.KeyCode == System.Windows.Forms.Keys.Space && _isPlaying == false && e.Control)
 			{
 				Image img = new Image();
 				string path = string.Format("/Icon/pause.png");

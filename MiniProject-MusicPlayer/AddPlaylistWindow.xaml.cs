@@ -40,14 +40,17 @@ namespace MiniProject_MusicPlayer
 
         private void CreateBtn_Click(object sender, RoutedEventArgs e)
         {
-			if (isExist(NameBox.Text))
+			if(string.IsNullOrWhiteSpace(NameBox.Text) == false)
 			{
-				MessageBox.Show("There is already a playlist with the same name!", "Name Duplicated");
-			}
-			else
-			{
-				ListName = NameBox.Text;
-				this.DialogResult = true;
+				if (isExist(NameBox.Text))
+				{
+					MessageBox.Show("There is already a playlist with the same name!", "Name Duplicated");
+				}
+				else
+				{
+					ListName = NameBox.Text.Trim();
+					this.DialogResult = true;
+				}
 			}
 		}
     }
