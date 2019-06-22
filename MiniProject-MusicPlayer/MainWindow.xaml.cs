@@ -39,8 +39,15 @@ namespace MiniProject_MusicPlayer
         public static bool _isRepeat = false;
         public static MyMusicPage mymusicpg = new MyMusicPage();
         public static PlaylistPage playlistpg = null;
+
         public static Check _check = new Check();
+        public static Check _checkOpen = new Check();
+        public static Check _checkEnd = new Check();
+
         public static int _upIndex = -1;
+        public static string _globalname = "";
+        public static int _globalindex = -1;
+
         public static bool _isHavingAPlayListRunning = false;
 		public static BindingList<Info> _tempPlaylist = new BindingList<Info>();
 		private IKeyboardMouseEvents _hook;
@@ -55,6 +62,9 @@ namespace MiniProject_MusicPlayer
             Control.Show(MainContent, mymusicpg);
 
             _check.PropertyChanged += Check_PropertyChanged;
+            _checkOpen.PropertyChanged += CheckOpen_PropertyChanged;
+            _checkEnd.PropertyChanged += CheckEnd_PropertyChanged;
+
 
             _timer.Interval = TimeSpan.FromSeconds(0);
             _timer.Tick += timer_Tick;
@@ -69,12 +79,12 @@ namespace MiniProject_MusicPlayer
         //Hook
         private void _hook_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
 		{
-			if(e.KeyCode == System.Windows.Forms.Keys.Space && _isPlaying == true)
+			if(e.Control && e.KeyCode == System.Windows.Forms.Keys.Space && _isPlaying == true)
 			{
 				Image img = new Image();
 				string path = string.Format("/Icon/play.png");
 				img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
-				img.Height = 40;
+				img.Height = 40; 
 				img.Width = 40;
 
 				playButton.Content = img;
@@ -83,7 +93,7 @@ namespace MiniProject_MusicPlayer
 				_audio.Pause();
 				_timer.Stop();
 			}
-			else if(e.KeyCode == System.Windows.Forms.Keys.Space && _isPlaying == false && e.Control)
+			else if(e.Control && e.KeyCode == System.Windows.Forms.Keys.Space && _isPlaying == false && e.Control)
 			{
 				Image img = new Image();
 				string path = string.Format("/Icon/pause.png");
@@ -198,20 +208,32 @@ namespace MiniProject_MusicPlayer
             PlaylistListView.DataContext = _playlistList;
         }
 
+        private void CheckOpen_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            Image img = new Image();
+            string path = string.Format("/Icon/pause.png");
+            img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+            img.Height = 40;
+            img.Width = 40;
+
+            playButton.Content = img;
+        }
+
+        private void CheckEnd_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            Current.Text = "00:00";
+            Image img = new Image();
+            string path = string.Format("/Icon/play.png");
+            img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+            img.Height = 40;
+            img.Width = 40;
+
+            playButton.Content = img;
+        }
+
         //timer
         public void timer_Tick(object sender, EventArgs e)
         {
-            if (Current.Text == "00:00")
-            {
-                Image img = new Image();
-                string path = string.Format("/Icon/pause.png");
-                img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
-                img.Height = 40;
-                img.Width = 40;
-
-                playButton.Content = img;
-            }
-
             if (!_isDragging)
             {
                 Slider.Value = _audio.Position.TotalSeconds;
@@ -220,18 +242,6 @@ namespace MiniProject_MusicPlayer
 
             Current.Text = String.Format(_audio.Position.ToString(@"mm\:ss"));
             Total.Text = String.Format(_audio.NaturalDuration.TimeSpan.ToString(@"mm\:ss"));
-
-            if (_audio.Position == _audio.NaturalDuration.TimeSpan)
-            {
-                Current.Text = "00:00";
-                Image img = new Image();
-                string path = string.Format("/Icon/play.png");
-                img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
-                img.Height = 40;
-                img.Width = 40;
-
-                playButton.Content = img;
-            }
         }
 
         //slider
@@ -272,15 +282,6 @@ namespace MiniProject_MusicPlayer
             currentlyPlayingSong = song;
             _audio.Open(new Uri(song));
             NowPlayingPage._check.ChangeNowplaying = true;
-        }
-
-        public void setIMG(Button btn, string path)
-        {
-            Image img = new Image();
-            img.Source = new BitmapImage(new Uri(string.Format(path), UriKind.Relative));
-            img.Height = 40;
-            img.Width = 40;
-            btn.Content = img;
         }
 
         //title bar
@@ -342,10 +343,25 @@ namespace MiniProject_MusicPlayer
                     if (index != -1)
                     {
                         Playlist items = item.Content as Playlist;
-                        string name = item.Name;
+                        _globalname = items.Name;
 
                         if (items != null)
                         {
+                            int i = 0;
+                            foreach (var list in _playlistList)
+                            {
+                                if (list.Name == _globalname)
+                                {
+                                    list.Save(true, 0);
+                                    _globalindex = i;
+                                }
+                                else
+                                {
+                                    list.Save();
+                                }
+                                i++;
+                            }
+
                             _tempPlaylist = items._song;
                             playlistpg = new PlaylistPage(_tempPlaylist);
                             Control.Show(MainContent, playlistpg);
@@ -501,7 +517,7 @@ namespace MiniProject_MusicPlayer
 			{
 				if (!_isPlaying)
 				{
-					Image img = new Image();
+                    Image img = new Image();
 					string path = string.Format("/Icon/pause.png");
 					img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
 					img.Height = 40;
@@ -532,153 +548,165 @@ namespace MiniProject_MusicPlayer
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-			if(currentlyPlayingSong != null)
-			{
-				_audio.Stop();
-				_timer.Stop();
-				_audio.Close();
-				string previousSong = null;
+            if (_currentlyPlayingPlayList.Count != 0)
+            {
+                if (currentlyPlayingSong != null)
+                {
+                    _audio.Stop();
+                    _timer.Stop();
+                    _audio.Close();
+                    string previousSong = null;
 
-				if(_isShuffle == true)
-				{
-					Random rnd = new Random();
+                    if (_isShuffle == true)
+                    {
+                        Random rnd = new Random();
 
-					if (PlaylistPage.indexes.Count == 0)
-					{
-						PlaylistPage.refillIndexesList();
-					}
+                        if (PlaylistPage.indexes.Count == 0)
+                        {
+                            PlaylistPage.refillIndexesList();
+                        }
 
-					int position = rnd.Next(PlaylistPage.indexes.Count);
+                        int position = rnd.Next(PlaylistPage.indexes.Count);
 
-					previousSong = PlaylistPage._Playlist[PlaylistPage.indexes[position]].FileName;
+                        previousSong = PlaylistPage._Playlist[PlaylistPage.indexes[position]].FileName;
 
-					PlaylistPage.indexes.RemoveAt(position);
-				}
-				else if (_isShuffle == false)
-				{
-					for (int i = 0; i < _currentlyPlayingPlayList.Count; i++)
-					{
-						if (currentlyPlayingSong == _currentlyPlayingPlayList[i].FileName)
-						{
-							if (i == 0)
-							{
-								previousSong = _currentlyPlayingPlayList[_currentlyPlayingPlayList.Count - 1].FileName;
-							}
-							else
-							{
-								previousSong = _currentlyPlayingPlayList[i - 1].FileName;
-							}
-						}
-					}
-				}
-				SetNowPlaying(previousSong);
-				_audio.MediaOpened += _audio_MediaOpened;
-				_audio.MediaEnded += _audio_MediaEnded;
-			}
+                        PlaylistPage.indexes.RemoveAt(position);
+                    }
+                    else if (_isShuffle == false)
+                    {
+                        for (int i = 0; i < _currentlyPlayingPlayList.Count; i++)
+                        {
+                            if (currentlyPlayingSong == _currentlyPlayingPlayList[i].FileName)
+                            {
+                                if (i == 0)
+                                {
+                                    previousSong = _currentlyPlayingPlayList[_currentlyPlayingPlayList.Count - 1].FileName;
+                                }
+                                else
+                                {
+                                    previousSong = _currentlyPlayingPlayList[i - 1].FileName;
+                                }
+                            }
+                        }
+                    }
+                    SetNowPlaying(previousSong);
+                    _audio.MediaOpened += _audio_MediaOpened;
+                    _audio.MediaEnded += _audio_MediaEnded;
+                }
+            }
         }	
 
 		private void NextButton_Click(object sender, RoutedEventArgs e)
         {
-			if (currentlyPlayingSong != null)
-			{
-				_audio.Stop();
-				_timer.Stop();
-				_audio.Close();
-				string nextSong = null;
+            if (_currentlyPlayingPlayList.Count != 0)
+            {
+                if (currentlyPlayingSong != null)
+                {
+                    _audio.Stop();
+                    _timer.Stop();
+                    _audio.Close();
+                    string nextSong = null;
 
-				if (_isShuffle == true)
-				{
-					Random rnd = new Random();
+                    if (_isShuffle == true)
+                    {
+                        Random rnd = new Random();
 
-					if (PlaylistPage.indexes.Count == 0)
-					{
-						PlaylistPage.refillIndexesList();
-					}
+                        if (PlaylistPage.indexes.Count == 0)
+                        {
+                            PlaylistPage.refillIndexesList();
+                        }
 
-					int position = rnd.Next(PlaylistPage.indexes.Count);
+                        int position = rnd.Next(PlaylistPage.indexes.Count);
 
-					nextSong = PlaylistPage._Playlist[PlaylistPage.indexes[position]].FileName;
+                        nextSong = PlaylistPage._Playlist[PlaylistPage.indexes[position]].FileName;
 
-					PlaylistPage.indexes.RemoveAt(position);
-				}
-				else if (_isShuffle == false)
-				{
-					for (int i = 0; i < _currentlyPlayingPlayList.Count(); i++)
-					{
-						if (currentlyPlayingSong == _currentlyPlayingPlayList[i].FileName)
-						{
-							if (i + 1 == _currentlyPlayingPlayList.Count())
-							{
-								nextSong = _currentlyPlayingPlayList[0].FileName;
-							}
-							else
-							{
-								nextSong = _currentlyPlayingPlayList[i + 1].FileName;
-							}
-						}
-					}
-				}
-				
-				SetNowPlaying(nextSong);
-				_audio.MediaOpened += _audio_MediaOpened;
-				_audio.MediaEnded += _audio_MediaEnded;
-			}
+                        PlaylistPage.indexes.RemoveAt(position);
+                    }
+                    else if (_isShuffle == false)
+                    {
+                        for (int i = 0; i < _currentlyPlayingPlayList.Count(); i++)
+                        {
+                            if (currentlyPlayingSong == _currentlyPlayingPlayList[i].FileName)
+                            {
+                                if (i + 1 == _currentlyPlayingPlayList.Count())
+                                {
+                                    nextSong = _currentlyPlayingPlayList[0].FileName;
+                                }
+                                else
+                                {
+                                    nextSong = _currentlyPlayingPlayList[i + 1].FileName;
+                                }
+                            }
+                        }
+                    }
+
+                    SetNowPlaying(nextSong);
+                    _audio.MediaOpened += _audio_MediaOpened;
+                    _audio.MediaEnded += _audio_MediaEnded;
+                }
+            }
         }
 
         private void ShuffleButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!_isShuffle)
+            if (_currentlyPlayingPlayList.Count != 0)
             {
-                Image img = new Image();
-                string path = string.Format("/Icon/shuffle (1).png");
-                img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
-                img.Height = 40;
-                img.Width = 40;
+                if (!_isShuffle)
+                {
+                    Image img = new Image();
+                    string path = string.Format("/Icon/shuffle (1).png");
+                    img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+                    img.Height = 40;
+                    img.Width = 40;
 
-                _isShuffle = true;
+                    _isShuffle = true;
 
-                shuffleButton.Content = img;
-            }
-            else
-            {
-                Image img = new Image();
-                string path = string.Format("/Icon/shuffle.png");
-                img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
-                img.Height = 40;
-                img.Width = 40;
+                    shuffleButton.Content = img;
+                }
+                else
+                {
+                    Image img = new Image();
+                    string path = string.Format("/Icon/shuffle.png");
+                    img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+                    img.Height = 40;
+                    img.Width = 40;
 
-                _isShuffle = false;
+                    _isShuffle = false;
 
-                shuffleButton.Content = img;
-            }
+                    shuffleButton.Content = img;
+                }
+            }              
         }
 
         private void RepeatButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!_isRepeat)
+            if (_currentlyPlayingPlayList.Count != 0)
             {
-                Image img = new Image();
-                string path = string.Format("/Icon/repeat (1).png");
-                img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
-                img.Height = 40;
-                img.Width = 40;
+                if (!_isRepeat)
+                {
+                    Image img = new Image();
+                    string path = string.Format("/Icon/repeat (1).png");
+                    img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+                    img.Height = 40;
+                    img.Width = 40;
 
-                _isRepeat = true;
+                    _isRepeat = true;
 
-                repeatButton.Content = img;
-            }
-            else
-            {
-                Image img = new Image();
-                string path = string.Format("/Icon/repeat.png");
-                img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
-                img.Height = 40;
-                img.Width = 40;
+                    repeatButton.Content = img;
+                }
+                else
+                {
+                    Image img = new Image();
+                    string path = string.Format("/Icon/repeat.png");
+                    img.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+                    img.Height = 40;
+                    img.Width = 40;
 
-                _isRepeat = false;
+                    _isRepeat = false;
 
-                repeatButton.Content = img;
-            }
+                    repeatButton.Content = img;
+                }
+            }          
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
@@ -700,6 +728,10 @@ namespace MiniProject_MusicPlayer
                 Slider.Value = 0;
                 Current.Text = "00:00";
                 Total.Text = "00:00";
+
+                File.Create("lastplayed.dat");
+                _currentlyPlayingPlayList.Clear();
+                Control.Show(MainContent, mymusicpg);
             }
         }
 
@@ -709,7 +741,7 @@ namespace MiniProject_MusicPlayer
 
             if (newplaylist.ShowDialog() == true)
             {
-                Playlist newPlaylist = new Playlist(newplaylist.ListName, new BindingList<Info>());
+                Playlist newPlaylist = new Playlist(newplaylist.ListName, new BindingList<Info>(), false, -1);
                 _playlistList.Add(newPlaylist);
                 PlaylistListView.DataContext = _playlistList;
             }
@@ -729,6 +761,7 @@ namespace MiniProject_MusicPlayer
             var item = sender as MenuItem;
             BindingList<Playlist> items = item.DataContext as BindingList<Playlist>;
 
+            File.Delete(items[_upIndex].Name + ".dat");
             MainWindow._playlistList.Remove(items[_upIndex]);
             Control.Show(MainContent, mymusicpg);
         }
@@ -741,24 +774,23 @@ namespace MiniProject_MusicPlayer
 
                 foreach (var items in _playlistList)
                 {
-                    items.Save();
+                    if (items.Name != _globalname)
+                    {
+                        items.Save();
+                    }
                     writer.WriteLine(items.Name);
                 }
 
                 writer.Close();
             }
-
-            if (_infoList.Count != 0)
+            else
             {
-                var writer = new StreamWriter("library.dat");
-
-                foreach (var items in _infoList)
-                {
-                    writer.WriteLine(items.FileName);
-                }
-
-                writer.Close();
+                File.Create("data.dat");
             }
+
+            var write = new StreamWriter("lastplayed.dat");
+            write.WriteLine(GetNowPlaying());
+            write.Close();
         }
 
         private void Load()
@@ -771,21 +803,6 @@ namespace MiniProject_MusicPlayer
                 {
                     try
                     {
-                        if (File.Exists("lastplayed.dat"))
-                        {
-                            string song = "";
-
-                            var read = new StreamReader("lastplayed.dat");
-
-                            while ((song = read.ReadLine()) != null)
-                            {
-                                SetNowPlaying(song);
-                                Control.Show(MainContent, new NowPlayingPage());
-                            }
-
-                            read.Close();
-                        }
-
                         string name = "";
 
                         var reader = new StreamReader("data.dat");
@@ -795,10 +812,12 @@ namespace MiniProject_MusicPlayer
                             var readerlist = new StreamReader(name + ".dat"); //System.IO.Path.GetFileNameWithoutExtension(name)
 
                             BindingList<Info> list = new BindingList<Info>();
+                            bool played = false;
+                            int index = -1;
 
                             string line = "";
 
-                            while ((line = readerlist.ReadLine()) != null)
+                            while ((line = readerlist.ReadLine()) != null && line != ":")
                             {
                                 ImageSource Cover = null;
                                 string Title = null;
@@ -839,13 +858,39 @@ namespace MiniProject_MusicPlayer
                                 list.Add(new Info(Cover, Title, Artist, Album, line));
                             }
 
+                            played = bool.Parse(readerlist.ReadLine());
+                            index = int.Parse(readerlist.ReadLine());
+
                             readerlist.Close();
 
-                            Playlist newPlaylist = new Playlist(name, list);
+                            Playlist newPlaylist = new Playlist(name, list, played, index);
                             _playlistList.Add(newPlaylist);
+
+                            if (played == true)
+                            {
+                                SetNowPlaying(list[index].FileName);
+                                _currentlyPlayingPlayList = list.ToList();
+                                Control.Show(MainContent, new NowPlayingPage());
+                            }
                             _check.ChangePlaylist = true;
                         }
+
                         reader.Close();
+
+                        if (File.Exists("lastplayed.dat"))
+                        {
+                            string song = "";
+
+                            var read = new StreamReader("lastplayed.dat");
+
+                            while ((song = read.ReadLine()) != null)
+                            {
+                                SetNowPlaying(song);
+                                Control.Show(MainContent, new NowPlayingPage());
+                            }
+
+                            read.Close();
+                        }
                     }
                     catch (FileNotFoundException)
                     {

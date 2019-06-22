@@ -9,6 +9,12 @@
              fw:AcrylicWindow.Enabled="True" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
+        <Grid.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="Browse more" Click="BrowseMenuItem_Click"/>
+                <MenuItem Header="Remove all" Click="RemoveAllMenuItem_Click"/>
+            </ContextMenu>
+        </Grid.ContextMenu>
         <Button Content="Browse" Name="browseButton" FontSize="15" Click="BrowseButton_Click" Visibility="Hidden" Background="{Binding Path=(fw:AccentColors.ImmersiveSystemAccentBrush)}" HorizontalAlignment="Center" Width="70" Height="35" Style="{StaticResource ButtonRevealStyle}">
             <Button.ToolTip>
                 <ToolTip>

@@ -11,6 +11,8 @@ namespace MiniProject_MusicPlayer.Class
     {
         private bool _changePlaylist = false;
         private bool _changeNowplaying = false;
+        private bool _changeOpen = false;
+        private bool _changeEnd = false;
 
         public bool ChangePlaylist
         {
@@ -34,6 +36,32 @@ namespace MiniProject_MusicPlayer.Class
                 if (PropertyChanged != null)
                 {
                     PropertyChanged.Invoke(this, new PropertyChangedEventArgs("_changeNowplaying"));
+                }
+            }
+        }
+
+        public bool ChangeOpen
+        {
+            get => _changeOpen;
+            set
+            {
+                _changeOpen = value;
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged.Invoke(this, new PropertyChangedEventArgs("_changeOpen"));
+                }
+            }
+        }
+
+        public bool ChangeEnd
+        {
+            get => _changeEnd;
+            set
+            {
+                _changeEnd = value;
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged.Invoke(this, new PropertyChangedEventArgs("_changeEnd"));
                 }
             }
         }

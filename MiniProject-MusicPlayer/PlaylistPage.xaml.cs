@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MiniProject_MusicPlayer.Class;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -28,13 +29,13 @@ namespace MiniProject_MusicPlayer
         public PlaylistPage(BindingList<Info> temp)
         {
             InitializeComponent();
-
-			_Playlist = temp;
+            _Playlist = temp;
             this.DataContext = this;
             PlayListListViewPage.ItemsSource = _Playlist;
 		}
 
-		private void RemoveMenuItem_Click(object sender, RoutedEventArgs e)
+
+        private void RemoveMenuItem_Click(object sender, RoutedEventArgs e)
 		{
 			if (PlayListListViewPage.SelectedItem != null)
 			{
@@ -69,16 +70,19 @@ namespace MiniProject_MusicPlayer
 		private void PlayMenuItem_Click(object sender, RoutedEventArgs e)
 		{
 			var song = PlayListListViewPage.SelectedItem as Info;
+            MainWindow._audio.Pause();
+            MainWindow._audio.Close();
+            MainWindow._timer.Stop();
 
-			refillIndexesList();
+            refillIndexesList();
 			startIndex = findSongIndex(song.FileName);
 			MainWindow._currentlyPlayingPlayList = _Playlist.ToList();
 			MainWindow.SetNowPlaying(song.FileName);
-			MainWindow._audio.MediaOpened += _audio_MediaOpened;
-			MainWindow._audio.MediaEnded += _audio_MediaEnded;
-		}
+            MainWindow._audio.MediaOpened += _audio_MediaOpened;
+            MainWindow._audio.MediaEnded += _audio_MediaEnded;
+        }
 
-		public void _audio_MediaEnded(object sender, EventArgs e)
+        public void _audio_MediaEnded(object sender, EventArgs e)
 		{			
 			MainWindow._isHavingAPlayListRunning = false;
 			MainWindow._isPlaying = false;
@@ -153,7 +157,11 @@ namespace MiniProject_MusicPlayer
 				MainWindow._audio.Close();
 				MainWindow.SetNowPlaying(nextSong.FileName);
 			}
-		}
+            else
+            {
+                MainWindow._checkEnd.ChangeEnd = true;
+            }
+        }
 
 		public void _audio_MediaOpened(object sender, EventArgs e)
 		{
@@ -161,14 +169,23 @@ namespace MiniProject_MusicPlayer
 			MainWindow._audio.Play();
 			MainWindow._isPlaying = true;
 			MainWindow._timer.Start();
+            MainWindow._checkOpen.ChangeOpen = true;
 
-			foreach(var info in _Playlist)
+            foreach (var info in _Playlist)
 			{
 				if(info.FileName == MainWindow.currentlyPlayingSong)
 				{
 					indexes.Remove(_Playlist.IndexOf(info));
 				}
 			}
-		}
+
+            for (int i = 0; i < _Playlist.Count; i++)
+            {
+                if (MainWindow.currentlyPlayingSong == _Playlist[i].FileName)
+                {
+                    MainWindow._playlistList[MainWindow._globalindex].Save(true, i);
+                }
+            }
+        }
 	}
 }
